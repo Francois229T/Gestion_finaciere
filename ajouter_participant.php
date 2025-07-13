@@ -1,186 +1,251 @@
 <?php
-require 'db.php';
 
-if ($_SERVER['REQUEST_METHOD']==='POST')
-{
-    $nom = $_POST['nom'];
-    $prenom = $_POST['prenom'];
-    $email = $_POST['email'];
+require_once 'db.php'; 
 
-    $statement =  $pdo->prepare("INSERT into participants(nom,prenom,email)VALUES(?,?,?)");
-    $statement->execute([$nom,$prenom,$email]);
-    echo json_encode(['messsage'=>'Participant ajouté']);
+$activite_id = isset($_GET['activite_id']) ? (int)$_GET['activite_id'] : 0;
+$activity_name = '';
+$participants_list = [];
+$error_message = '';
+$success_message = '';
+
+// --- 1. Récupérer les détails de l'activité ---
+if ($activite_id > 0) {
+    try {
+        $stmt_activity = $mysqlClient->prepare("SELECT nom FROM activites WHERE id = :id");
+        $stmt_activity->execute([':id' => $activite_id]);
+        $activity_data = $stmt_activity->fetch(PDO::FETCH_ASSOC);
+        if ($activity_data) {
+            $activity_name = htmlspecialchars($activity_data['nom']);
+        } else {
+            $error_message = "Activité non trouvée.";
+            $activite_id = 0; // Réinitialiser pour éviter d'autres opérations incorrectes
+        }
+    } catch (PDOException $e) {
+        $error_message = "Erreur lors de la récupération de l'activité : " . htmlspecialchars($e->getMessage());
+    }
 }
-?> 
+
+// --- 2. Récupérer la liste de tous les participants (pour le selectbox) ---
+if ($activite_id > 0) { // On ne récupère les participants que si l'activité est valide
+    try {
+        // Récupérer les personnes physiques
+        $stmt_physiques = $mysqlClient->query("SELECT id, nom_complet AS nom_display, 'physique' AS type FROM personnes_physiques ORDER BY nom_complet");
+        while ($row = $stmt_physiques->fetch(PDO::FETCH_ASSOC)) {
+            $participants_list[] = $row;
+        }
+
+        // Récupérer les personnes morales
+        $stmt_morales = $mysqlClient->query("SELECT id, raison_sociale AS nom_display, 'morale' AS type FROM personnes_morales ORDER BY raison_sociale");
+        while ($row = $stmt_morales->fetch(PDO::FETCH_ASSOC)) {
+            $participants_list[] = $row;
+        }
+    } catch (PDOException $e) {
+        $error_message .= " Erreur lors de la récupération des participants : " . htmlspecialchars($e->getMessage());
+    }
+}
+
+
+// --- 3. Gérer la soumission du formulaire d'ajout de participant à l'activité ---
+if ($_SERVER["REQUEST_METHOD"] == "POST" && $activite_id > 0) {
+    // Récupération et validation des données du formulaire
+    $participant_full_id    = trim($_POST['participant_id'] ?? ''); // Format 'type_ID' (ex: 'physique_1', 'morale_5')
+    $taux_journalier        = trim($_POST['taux_journalier'] ?? '');
+    $forfait                = trim($_POST['forfait'] ?? '');
+    $frais_deplacement      = trim($_POST['frais_deplacement'] ?? '');
+    $nb_jours_deplacement   = trim($_POST['nb_jours_deplacement'] ?? '');
+    $nb_jours_copies        = trim($_POST['nb_jours_copies'] ?? '');
+
+    $participant_parts = explode('_', $participant_full_id);
+    $type_participant = $participant_parts[0] ?? '';
+    $participant_id = (int)($participant_parts[1] ?? 0);
+
+    // Basic validation
+    if ($participant_id === 0 || empty($type_participant)) {
+        $error_message = "Veuillez sélectionner un participant valide.";
+    } else {
+        try {
+            $mysqlClient->beginTransaction();
+
+            $sql = "INSERT INTO participations (
+                        activite_id,
+                        participant_id,
+                        type_participant,
+                        taux_journalier_alloue,
+                        forfait_alloue,
+                        frais_deplacement_alloue,
+                        nb_jours_deplacement_alloue,
+                        nb_jours_copies_alloue,
+                        date_enregistrement
+                    ) VALUES (
+                        :activite_id,
+                        :participant_id,
+                        :type_participant,
+                        :taux_journalier,
+                        :forfait,
+                        :frais_deplacement,
+                        :nb_jours_deplacement,
+                        :nb_jours_copies,
+                        NOW()
+                    )";
+
+            $stmt = $mysqlClient->prepare($sql);
+
+            $stmt->execute([
+                ':activite_id'          => $activite_id,
+                ':participant_id'       => $participant_id,
+                ':type_participant'     => $type_participant,
+                ':taux_journalier'      => !empty($taux_journalier) ? (float)$taux_journalier : NULL,
+                ':forfait'              => !empty($forfait) ? (float)$forfait : NULL,
+                ':frais_deplacement'    => !empty($frais_deplacement) ? (float)$frais_deplacement : NULL,
+                ':nb_jours_deplacement' => !empty($nb_jours_deplacement) ? (int)$nb_jours_deplacement : NULL,
+                ':nb_jours_copies'      => !empty($nb_jours_copies) ? (int)$nb_jours_copies : NULL
+            ]);
+
+            $mysqlClient->commit();
+            $success_message = "Participant ajouté à l'activité avec succès !";
+
+            // Après l'ajout réussi, redirigez l'utilisateur vers la page de gestion des participants
+            // pour voir la liste mise à jour.
+            header("Location: gerer_participants.php?activite_id={$activite_id}&msg=" . urlencode($success_message));
+            exit();
+
+        } catch (PDOException $e) {
+            $mysqlClient->rollBack();
+            $error_message = "Erreur lors de l'ajout du participant : " . htmlspecialchars($e->getMessage());
+        }
+    }
+}
+
+?>
 
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ajouter un Participant à une Activité</title>
+    <title>Ajouter un Participant à l'Activité : <?php echo $activity_name; ?></title>
+    <link rel="stylesheet" href="class1.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f7f6;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-        .container {
-            background-color: #ffffff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 600px;
-        }
-        h2 {
-            color: #333;
-            text-align: center;
-            margin-bottom: 25px;
-        }
-        .form-group {
-            margin-bottom: 18px;
-        }
-        label {
+        /* (Conservez les styles CSS pour les formulaires, messages, etc. du précédent exemple) */
+        .form-group label {
             display: block;
-            margin-bottom: 8px;
-            color: #555;
+            margin-bottom: 5px;
             font-weight: bold;
         }
-        input[type="text"],
-        input[type="number"],
-        select {
-            width: calc(100% - 20px); /* Adjust for padding */
-            padding: 10px;
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
             border: 1px solid #ddd;
             border-radius: 4px;
-            font-size: 16px;
-            box-sizing: border-box; /* Include padding in width */
+            box-sizing: border-box; /* Pour inclure padding et border dans la largeur */
         }
-        input[type="number"] {
-            -moz-appearance: textfield; /* Firefox hide arrows */
-        }
-        input[type="number"]::-webkit-outer-spin-button,
-        input[type="number"]::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-        button {
-            background-color: #28a745;
+        .form-group button {
+            background-color: #007bff;
             color: white;
-            padding: 12px 20px;
+            padding: 10px 15px;
             border: none;
-            border-radius: 5px;
+            border-radius: 4px;
             cursor: pointer;
-            font-size: 18px;
-            width: 100%;
-            margin-top: 20px;
-            transition: background-color 0.3s ease;
+            font-size: 1em;
         }
-        button:hover {
-            background-color: #218838;
+        .form-group button:hover {
+            background-color: #0056b3;
         }
-        .info-text {
-            font-size: 0.9em;
-            color: #777;
-            margin-top: 5px;
+        .message-erreur {
+            color: red;
+            text-align: center;
+            margin: 20px 0;
+            padding: 10px;
+            background-color: #ffe0e0;
+            border: 1px solid #ffb3b3;
+            border-radius: 5px;
+            width: 80%;
+            margin-left: auto;
+            margin-right: auto;
         }
-        .flex-group {
-            display: flex;
-            gap: 20px; /* Space between columns */
-        }
-        .flex-group > div {
-            flex: 1; /* Makes columns take equal width */
+        .message-succes {
+            color: green;
+            text-align: center;
+            margin: 20px 0;
+            padding: 10px;
+            background-color: #e0ffe0;
+            border: 1px solid #b3ffb3;
+            border-radius: 5px;
+            width: 80%;
+            margin-left: auto;
+            margin-right: auto;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Ajouter un Participant à une Activité</h2>
-        <form action="traitement_participation.php" method="POST">
+    <header>
+        </header>
 
-            <div class="form-group">
-                <label for="activity_id">Sélectionner l'Activité :</label>
-                <select id="activity_id" name="activity_id" required>
-                    <option value="">-- Choisir une activité --</option>
-                    <?php
-                        // PHP : Ici, vous devez boucler sur les activités récupérées depuis votre base de données
-                        // Exemple (à remplacer par votre logique de récupération de données) :
-                        // foreach ($activites as $activite) {
-                        //     echo "<option value='" . htmlspecialchars($activite['id']) . "'>" . htmlspecialchars($activite['nom_activite']) . "</option>";
-                        // }
-                    ?>
-                    <option value="1">Examen du BEPC 2025</option>
-                    <option value="2">Formation des Formateurs Janvier</option>
-                    <option value="3">Campagne de Sensibilisation</option>
-                    </select>
-            </div>
+    <main>
+        <section class="add-participant-form-section">
+            <h2>Ajouter un Participant à l'Activité : <?php echo $activity_name; ?></h2>
 
-            <div class="form-group">
-                <label for="participant_id">Sélectionner le Participant :</label>
-                <select id="participant_id" name="participant_id" required>
-                    <option value="">-- Choisir un participant --</option>
-                    <?php
-                        // PHP : Ici, vous devez boucler sur les participants (personnes) récupérés depuis votre base de données
-                        // Exemple (à remplacer par votre logique de récupération de données) :
-                        // foreach ($participants as $participant) {
-                        //     echo "<option value='" . htmlspecialchars($participant['id']) . "'>" . htmlspecialchars($participant['nom_complet']) . "</option>";
-                        // }
-                    ?>
-                    <option value="101">M. Jean Dupont (Correcteur)</option>
-                    <option value="102">Mme. Marie Curie (Superviseur)</option>
-                    <option value="103">Dr. Ali Ben (Agent de Santé)</option>
-                    </select>
-            </div>
+            <?php if (!empty($error_message)): ?>
+                <p class="message-erreur"><?php echo $error_message; ?></p>
+            <?php endif; ?>
+            <?php if (!empty($success_message)): ?>
+                <p class="message-succes"><?php echo $success_message; ?></p>
+            <?php endif; ?>
 
-            <div class="form-group">
-                <label for="titre_participant">Titre/Rôle du Participant dans cette Activité :</label>
-                <input type="text" id="titre_participant" name="titre_participant" placeholder="Ex: Correcteur, Superviseur, Agent de Sécurité" required>
-                <div class="info-text">Le rôle spécifique du participant pour cette activité.</div>
-            </div>
+            <?php if ($activite_id === 0): ?>
+                <p class="message-erreur">Une erreur est survenue. L'activité n'a pas été spécifiée.</p>
+                <p class="message-erreur">Veuillez retourner à la <a href="lister_activites.php">liste des activités</a>.</p>
+            <?php else: ?>
+                <form action="ajouter_participant_activite.php?activite_id=<?php echo $activite_id; ?>" method="post">
+                    <div class="form-group">
+                        <label for="participant_id">Sélectionner un participant :</label>
+                        <select id="participant_id" name="participant_id" required>
+                            <option value="">-- Choisir un participant --</option>
+                            <?php if (empty($participants_list)): ?>
+                                <option value="" disabled>Aucun participant disponible. Veuillez en créer un d'abord.</option>
+                            <?php else: ?>
+                                <?php foreach ($participants_list as $participant): ?>
+                                    <option value="<?php echo htmlspecialchars($participant['type'] . '_' . $participant['id']); ?>">
+                                        <?php echo htmlspecialchars($participant['nom_display']); ?> (<?php echo htmlspecialchars($participant['type']); ?>)
+                                    </option>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </select>
+                    </div>
 
-            <div class="flex-group">
-                <div class="form-group">
-                    <label for="nb_jours_copies">Nombre de Jours / Copies :</label>
-                    <input type="number" id="nb_jours_copies" name="nb_jours_copies" min="0" step="1" placeholder="Ex: 150 (copies) ou 5 (jours)" required>
-                    <div class="info-text">Nombre d'unités de travail (jours ou copies).</div>
-                </div>
+                    <div class="form-group">
+                        <label for="taux_journalier">Taux Journalier Alloué :</label>
+                        <input type="number" step="0.01" id="taux_journalier" name="taux_journalier">
+                    </div>
+                    <div class="form-group">
+                        <label for="forfait">Forfait Alloué :</label>
+                        <input type="number" step="0.01" id="forfait" name="forfait">
+                    </div>
+                    <div class="form-group">
+                        <label for="frais_deplacement">Frais de Déplacement Alloués :</label>
+                        <input type="number" step="0.01" id="frais_deplacement" name="frais_deplacement">
+                    </div>
+                    <div class="form-group">
+                        <label for="nb_jours_deplacement">Nombre de Jours de Déplacement :</label>
+                        <input type="number" id="nb_jours_deplacement" name="nb_jours_deplacement">
+                    </div>
+                    <div class="form-group">
+                        <label for="nb_jours_copies">Nombre de Jours Copies :</label>
+                        <input type="number" id="nb_jours_copies" name="nb_jours_copies">
+                    </div>
 
-                <div class="form-group">
-                    <label for="taux_journalier_copie">Taux Journalier / Copie (XOF) :</label>
-                    <input type="number" id="taux_journalier_copie" name="taux_journalier_copie" min="0" step="0.01" placeholder="Ex: 500 (par copie) ou 25000 (par jour)" required>
-                    <div class="info-text">Montant unitaire de rémunération.</div>
-                </div>
-            </div>
+                    <div class="form-group">
+                        <button type="submit">Ajouter le Participant</button>
+                    </div>
+                </form>
+            <?php endif; ?>
+        </section>
+    </main>
 
-            <div class="flex-group">
-                <div class="form-group">
-                    <label for="forfait">Montant Forfaitaire (XOF) :</label>
-                    <input type="number" id="forfait" name="forfait" min="0" step="0.01" placeholder="Ex: 10000" value="0">
-                    <div class="info-text">Montant fixe additionnel (si applicable).</div>
-                </div>
-
-                <div class="form-group">
-                    <label for="frais_deplacement">Frais de Déplacement (XOF) :</label>
-                    <input type="number" id="frais_deplacement" name="frais_deplacement" min="0" step="0.01" placeholder="Ex: 5000" value="0">
-                    <div class="info-text">Coût total des déplacements (si applicable).</div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="nombre_jour_deplacement">Nombre de Jours de Déplacement :</label>
-                <input type="number" id="nombre_jour_deplacement" name="nombre_jour_deplacement" min="0" step="1" placeholder="Ex: 2" value="0">
-                <div class="info-text">Nombre de jours pour lesquels des frais de déplacement sont alloués.</div>
-            </div>
-
-            <button type="submit">Ajouter la Participation</button>
-
-        </form>
-    </div>
+    <footer>
+        </footer>
 </body>
 </html>

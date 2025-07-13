@@ -1,7 +1,6 @@
 <?php
 require 'db.php';
 if ($_SERVER['REQUEST_METHOD']==='POST'){
-    $mysqlClient->beginTransaction();
     $errors = []; // Initialisez votre tableau d'erreurs ici
     $success = ""; // Pour les messages de succès
 
@@ -152,7 +151,6 @@ if (isset($_FILES['note_generatrice']) && $_FILES['note_generatrice']['error'] =
             // 8. Déplacer le fichier temporaire vers sa destination finale
             if (move_uploaded_file($file['tmp_name'], $uploadFilePath)) {
                 $notePdfPath = $uploadFilePath; // Chemin à stocker dans la base de données
-                echo "Fichier PDF de la note génératrice téléchargé avec succès : " . htmlspecialchars($notePdfPath);
             } else {
                 $uploadError = "Une erreur inconnue est survenue lors du déplacement du fichier.";
                 // Vous pouvez obtenir plus de détails sur l'erreur ici avec error_get_last()
@@ -223,13 +221,13 @@ if (!empty($uploadError)) {
  
     try {
     
-        
+        $mysqlClient->beginTransaction();
         $InsertActivity = "INSERT INTO activites (nom, description, responsable_titre, organisateur_titre, financier_titre, periode_debut, periode_fin, centre, note_generatrice)
         VALUES (:nom_activite, :description_activite, :premier_responsable, :organisateur, :financier, :start_date, :end_date, :location, :note_generatrice)";
         $stmt = $mysqlClient->prepare($InsertActivity);
         $stmt->execute([
              ':nom_activite'         => $nom_activite,
-             ':description_activite' => $description_activite,
+             ':description_activite' => !empty($description_activite) ? $description_activite : NULL,
              ':premier_responsable'  => $premier_responsable,
              ':organisateur'         => $organisateur,
              ':financier'            => $financier,
@@ -238,23 +236,8 @@ if (!empty($uploadError)) {
              ':location'             => $location,
              ':note_generatrice'     => $notePdfPath
              ]);
+             $mysqlClient->commit();
              echo "<p style='color: green;'>Activité insérée avec succès dans la base de données !</p>";
-
-             // --- AJOUTEZ CES LIGNES POUR DIAGNOSTIQUER ---
-$lastId = $mysqlClient->lastInsertId();
-echo "<p style='color: blue;'>ID de la dernière insertion : " . htmlspecialchars($lastId) . "</p>";
-
-// Tentez de récupérer l'enregistrement fraîchement inséré pour vérifier
-$check_sql = "SELECT nom FROM activites WHERE id = :last_id";
-$check_stmt = $mysqlClient->prepare($check_sql);
-$check_stmt->execute([':last_id' => $lastId]);
-$inserted_activity = $check_stmt->fetch(PDO::FETCH_ASSOC);
-
-if ($inserted_activity) {
-    echo "<p style='color: blue;'>Activité retrouvée juste après insertion : " . htmlspecialchars($inserted_activity['nom']) . "</p>";
-} else {
-    echo "<p style='color: orange;'>ATTENTION : L'activité n'a pas pu être retrouvée immédiatement après l'insertion !</p>";
-}
 
 
     }catch (PDOException $e) {
@@ -308,8 +291,8 @@ if ($inserted_activity) {
                 <li class="dropdown">
                     <a href="#" class="dropbtn">Activités</a>
                     <div class="dropdown-content">
-                        <a href="creer_activite.html">Créer Activité</a>
-                        <a href="gerer_activite.html">Gérer Activité</a>
+                        <a href="creer_activite.php">Créer Activité</a>
+                        <a href="gerer_activite.php">Gérer Activité</a>
                     </div>
                 </li>
                 <li><a href="#">Participants</a></li>
