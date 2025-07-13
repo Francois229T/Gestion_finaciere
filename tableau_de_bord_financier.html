@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de Bord Financier - Gestion des Paiements</title>
+    <link rel="stylesheet" href="class1.css"> </head>
+<body>
+    <header>
+        <div class="header-top">
+            <div class="header-content">
+                <img src="tresorpubbenin.png" alt="Logo Trésor Public Bénin" id="logo">
+                <div class="site-branding">
+                    <h1>Plateforme de Gestion des Paiements</h1>
+                    <p>Bienvenue sur la plateforme de paiement des activités</p>
+                </div>
+            </div>
+            <div class="header-utility">
+                <div class="search-bar">
+                    <input type="search" placeholder="Rechercher une activité..." aria-label="Rechercher">
+                    <button type="submit">Rechercher</button>
+                </div>
+                <nav class="utility-nav">
+                    <ul>
+                        <li><a href="page_aide.html">Aide</a></li>
+                        <li><a href="page_contact.html">Contact</a></li>
+                        </ul>
+                </nav>
+            </div>
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="accueil.html">Accueil Public</a></li> <li class="dropdown">
+                    <a href="#" class="dropbtn">Activités</a>
+                    <div class="dropdown-content">
+                        <a href="creer_activite.html">Créer Activité</a>
+                        <a href="gerer_activite.html">Gérer Activité</a>
+                    </div>
+                </li> 
+                <li><a href="#">Participants</a></li> <li><a href="#">Paiements</a></li> <li><a href="#">Documents</a></li> <li><a href="dashboard_financier.html" class="active">Tableau de Bord</a></li> <li><a href="#">Mon Profil</a></li> <li><a href="login.html">Déconnexion</a></li> </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <h2>Tableau de Bord du Financier</h2>
+        <p class="dashboard-description">Vue d'ensemble et accès rapide à la gestion des paiements des activités.</p>
+
+        <section class="dashboard-section">
+            <h3>Statistiques Générales</h3>
+            <div class="card-grid">
+                <div class="card">
+                    <h4>Activités en Cours</h4>
+                    <p class="big-number">8</p>
+                    <a href="#" class="btn secondary">Gérer les activités</a>
+                </div>
+                <div class="card">
+                    <h4>Participants Enrôlés</h4>
+                    <p class="big-number">150</p>
+                    <a href="#" class="btn secondary">Voir les participants</a>
+                </div>
+                <div class="card">
+                    <h4>Paiements en Attente de Traitement</h4>
+                    <p class="big-number">5</p>
+                    <a href="#" class="btn secondary">Traiter les paiements</a>
+                </div>
+                <div class="card">
+                    <h4>Montant Total des Paiements en Attente</h4>
+                    <p class="big-number">2.5M XOF</p> <a href="#" class="btn secondary">Détail des montants</a>
+                </div>
+            </div>
+        </section>
+
+        <hr>
+
+        <section class="dashboard-section">
+            <h3>Actions Rapides</h3>
+            <div class="quick-actions-grid">
+                <a href="creer_activite.html" class="btn primary big-btn">
+                    <span>➕</span> Créer une Nouvelle Activité
+                </a>
+                <a href="#" class="btn primary big-btn">
+                    <span>👥</span> Gérer les Participants
+                </a>
+                <a href="#" class="btn primary big-btn">
+                    <span>💰</span> Lancer le Traitement des Paiements
+                </a>
+                <a href="#" class="btn primary big-btn">
+                    <span>📄</span> Générer un État de Paiement
+                </a>
+                <a href="#" class="btn primary big-btn">
+                    <span>🏦</span> Générer les Ordres de Virement
+                </a>
+                <a href="#" class="btn primary big-btn">
+                    <span>📁</span> Accéder à la Bibliothèque de Documents
+                </a>
+            </div>
+        </section>
+
+        <hr>
+
+        <section class="dashboard-section recent-activity-overview">
+            <h3>Activités Récentes et Derniers Paiements</h3>
+            <div class="card-grid">
+                <div class="card">
+                    <h4>Dernière Activité Créée</h4>
+                    <p><strong>Formation RH 2025</strong><br>Du 10/06/2025 au 14/06/2025<br>25 Participants</p>
+                    <a href="#" class="btn secondary">Voir les détails</a>
+                </div>
+                <div class="card">
+                    <h4>Dernier Paiement Traité</h4>
+                    <p><strong>Activité : Audit Interne Q1 2025</strong><br>Date de virement : 05/06/2025<br>Montant : 1.2M XOF</p>
+                    <a href="#" class="btn secondary">Voir la synthèse</a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Trésor Public Bénin. Tous droits réservés.</p>
+    </footer>
+</body>
+</html>

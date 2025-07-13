@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de Bord Financier - Gestion des Paiements</title>
+    <link rel="stylesheet" href="class1.css"> </head>
+<body>
+    <header>
+        <div class="header-top">
+            <div class="header-content">
+                <img src="tresorpubbenin.png" alt="Logo Trésor Public Bénin" id="logo">
+                <div class="site-branding">
+                    <h1>Plateforme de Gestion des Paiements</h1>
+                    <p>Bienvenue sur la plateforme de paiement des activités</p>
+                </div>
+            </div>
+            <div class="header-utility">
+                <div class="search-bar">
+                    <input type="search" placeholder="Rechercher une activité..." aria-label="Rechercher">
+                    <button type="submit">Rechercher</button>
+                </div>
+                <nav class="utility-nav">
+                    <ul>
+                        <li><a href="page_aide.html">Aide</a></li>
+                        <li><a href="page_contact.html">Contact</a></li>
+                        </ul>
+                </nav>
+            </div>
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="index.html">Accueil Public</a></li> <li class="dropdown">
+                    <a href="#" class="dropbtn">Activités</a>
+                    <div class="dropdown-content">
+                        <a href="creer_activite.html">Créer Activité</a>
+                        <a href="gerer_activite.html">Gérer Activité</a>
+                    </div>
+                </li>
+                <li><a href="#">Participants</a></li> <li><a href="#">Paiements</a></li> <li><a href="#">Documents</a></li> <li><a href="dashboard_financier.html" class="active">Tableau de Bord</a></li> <li><a href="#">Mon Profil</a></li> <li><a href="login.html">Déconnexion</a></li> </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class= "data-management-section">
+            <h2>Gérer les Activités</h2>
+            <p class= »section-description »>Consultez la liste des activités existantes, et effectuez des actions de modification ou de suppression.</p>
+
+            <div class= "actions-top-bar">
+                <a href= "créer_activite.html" class= "btn primary" >➕ Créer une nouvelle activité</a>
+                <div class= "filter-sort-options">
+                    <input type="text"vplaceholder= "Rechercher par nom…" class= "search-input">
+                    <select class= "filter-select">
+                        <option value= "">Filtrer par statut</option>
+                        <option value= "active">Active</option>
+                        <option value= "planned">Planifiée</option>
+                        <option value= "completed">Terminée</option>
+                        <option value= "cancelled">Annulée</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class= "table-responsive">
+                <table class= "data-table ">
+                    <thead>
+                        <tr>
+                            <th>Nom de l’activité</th>
+                            <th>Type</th>
+                            <th>Dates</th>
+                            <th>Lieu</th>
+                            <th>Budget Estimé</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Examen BEPC 2025</td>
+                            <td>Examen / Concours</td>
+                            <td>01/07/2025 - 05/07/2025</td>
+                            <td>Cotonou</td>
+                            <td>5.000.000 XOF</td>
+                            <td>Active</td>
+                            <td>
+                                <a href= "#" class= "btn btn-small btn-edit" >Modifier</a>
+                                <button class= "btn btn-small btn-delete"  ,>Supprimer</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Formation RH – Nouveaux Recrus</td>
+                            <td>Formation / Séminaire</td>
+                            <td>10/06/2025 – 14/06/2025</td>
+                            <td>Porto-Novo</td>
+                            <td>2.500.000 XOF</td>
+                            <td>Terminée</td>
+                            <td>
+                                <a href= "#" class="btn btn-small btn-edit">Modifier</a>
+                                <button class= "btn btn-small btn-delete">Supprimer</button>
+                            </td>
+                        </tr>
+                         <tr>
+                            <td>Audit Interne Q2 2025</td>
+                            <td>Audit / Inspection</td>
+                            <td>20/07/2025 – 25/07/2025</td>
+                            <td>Abomey-Calavi</td>
+                            <td>1.800.000 XOF</td>
+                            <td>Planifiée</td>
+                            <td>
+                                <a href= "#" class= "btn btn-small btn-edit ">Modifier</a>
+                                <button class= "btn btn-small btn-delete">Supprimer</button>
+                            </td>
+                        </tr>
+                        </tbody>
+                </table>
+            </div>
+
+            <div class= "pagination">
+                <a href= "#">Précédent</a>
+                <span>Page 1 sur 3</span>
+                <a href= "#">Suivant</a>
+            </div>
+
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy ; 2025 Trésor Public Bénin. Tous droits réservés.</p>
+    </footer>
+</body>
+</html>
+
+

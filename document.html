@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documents Générés - Plateforme Financière</title>
+    <link rel="stylesheet" href="class1.css">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <header>
+        <div class="header-top">
+            <div class="header-content">
+                <img src="logo.png" alt="Logo de l'entreprise" id="logo">
+                <div class="site-branding">
+                    <h1>Plateforme de Gestion Financière</h1>
+                    <p>Votre partenaire pour une gestion optimisée</p>
+                </div>
+            </div>
+            <div class="header-utility">
+                <div class="search-bar">
+                    <input type="search" placeholder="Rechercher...">
+                    <button type="submit">Rechercher</button>
+                </div>
+                <nav class="utility-nav">
+                    <ul>
+                        <li><a href="page_aide.html">Aide</a></li>
+                        <li><a href="page_contact.html">Contact</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="index.html">Accueil</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropbtn">Participants Activités</a>
+                    <div class="dropdown-content">
+                        <a href="inscription_part.php">Enregistrer un participant</a>
+                        <a href="gerer_participant.html">Gérer les participants</a>
+                        <a href="creer_activite.html">Créer une activité</a>
+                        <a href="gerer_activite.html">Gérer les activités</a>
+                    </div>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropbtn">Tableaux de bord</a>
+                    <div class="dropdown-content">
+                        <a href="tableau_de_bord_financier.html">Tableau de bord financier</a>
+                        <a href="#">Autres tableaux de bord</a>
+                    </div>
+                </li>
+                <li><a href="gerer_paiement.html">Paiements</a></li>
+                <li><a href="document.html" class="active">Documents</a></li>
+                <li><a href="rapports.html">Rapports</a></li>
+                <li><a href="parametres.html">Paramètres</a></li>
+                <li><a href="login.html">Connexion</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="data-management-section">
+            <h2>Documents Générés</h2>
+            <p class="section-description">Accédez à tous les documents PDF générés pour vos activités et paiements.</p>
+
+            <div class="actions-top-bar">
+                <select class="filter-select" style="min-width: 200px;">
+                    <option value="">Filtrer par Activité</option>
+                    <option value="act001">Projet Alpha</option>
+                    <option value="act002">Vente Logiciel Beta</option>
+                </select>
+                <select class="filter-select">
+                    <option value="">Filtrer par Type de Document</option>
+                    <option value="note_service">Note de service</option>
+                    <option value="attestation_travail">Attestation collective de travail</option>
+                    <option value="etat_paiement">État de paiement</option>
+                    <option value="ordres_virements">Ordres de virements</option>
+                    <option value="synthese_virements">Synthèse des ordres de virements</option>
+                    <option value="rib_collectif">Fichier des RIB des participants</option>
+                </select>
+                <input type="text" class="search-input" placeholder="Rechercher par Référence...">
+            </div>
+
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Activité</th>
+                            <th>Type de Document</th>
+                            <th>Référence/Titre</th>
+                            <th>Date de Génération</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Exemples de documents (dynamique en backend) -->
+                        <tr>
+                            <td>Projet Alpha</td>
+                            <td>État de paiement</td>
+                            <td>État Paiement_ProjetAlpha_Juin2025</td>
+                            <td>2025-06-22</td>
+                            <td>
+                                <a href="./documents/etat_paiement_projet_alpha.pdf" target="_blank" class="btn btn-small primary">Voir/Télécharger</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Projet Alpha</td>
+                            <td>Fichier des RIB des participants</td>
+                            <td>RIB_ProjetAlpha_Participants</td>
+                            <td>2025-06-20</td>
+                            <td>
+                                <a href="./documents/ribs_projet_alpha.pdf" target="_blank" class="btn btn-small primary">Voir/Télécharger</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Vente Logiciel Beta</td>
+                            <td>Attestation collective de travail</td>
+                            <td>Attest_Travail_VenteBeta_Mars2025</td>
+                            <td>2025-03-15</td>
+                            <td>
+                                <a href="./documents/attestation_vente_beta.pdf" target="_blank" class="btn btn-small primary">Voir/Télécharger</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Consultation Marketing</td>
+                            <td>Ordres de virements</td>
+                            <td>Ordres_Virements_ConsultationMkg</td>
+                            <td>2025-05-28</td>
+                            <td>
+                                <a href="./documents/ordres_virements_consultation.pdf" target="_blank" class="btn btn-small primary">Voir/Télécharger</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="pagination">
+                <a href="#">Précédent</a>
+                <a href="#">1</a>
+                <a href="#">2</a>
+                <a href="#">3</a>
+                <a href="#">Suivant</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Plateforme de Gestion Financière. Tous droits réservés.</p>
+    </footer>
+</body>
+</html>

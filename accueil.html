@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plateforme de Gestion des Paiements Activités Publics et Personnes Morales</title>
+    <link rel="stylesheet" href="class1.css">
+</head>
+<body>
+    <header>
+        <div class="header-top">
+            <div class="header-content">
+                <img src="tresorpubbenin.png" alt="Logo Trésor Public Bénin" id="logo">
+                <div class="site-branding">
+                    <h1>Plateforme de Gestion des Paiements</h1>
+                    <p>Bienvenue sur la plateforme de paiement des activités</p>
+                </div>
+            </div>
+            <div class="header-utility">
+                <div class="search-bar">
+                    <input type="search" placeholder="Rechercher une activité..." aria-label="Rechercher">
+                    <button type="submit">Rechercher</button>
+                </div>
+                <nav class="utility-nav">
+                    <ul>
+                        <li><a href="page_aide.html">Aide</a></li>
+                        <li><a href="page_contact.html">Contact</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="accueil.html">Accueil</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="main-actions-grid">
+            <h2></h2>
+
+            <div class="action-card">
+                <img src="enrolled.png" alt="Icône Inscription" class="action-icon">
+                <h3>Inscrire un participant</h3>
+                    <p>Pour le compte de l'état ou à son compte propre.</p>
+                <select onchange="window.location.href=this.value;">
+                    <option value="">-- Sélectionnez une page -- </option>
+                    <option value="inscription_etat.php"> Inscription d'un agent de l'Etat </option>
+                    <option value="inscription_morale.php"> Inscription d'une personne morale </option>
+                    <option value="inscription_part.php"> Inscription d'un participant </option>
+                
+                </select>
+                </a>
+            </div>
+
+            <div class="action-card">
+                <a href="creer_activite.php">
+                    <img src="activité.png" alt="Icône Création d'activité" class="action-icon">
+                    <h3>Créer une nouvelle activité</h3>
+                    <p>Mettez en place une nouvelle activité publique.</p>
+                </a>
+            </div>
+
+            <div class="action-card">
+                <a href="gerer_activite.html">
+                    <img src="gestion.png"alt="Icône Gestion d'activité" class="action-icon">
+                    <h3>Gérer vos activités</h3>
+                    <p>Accédez aux documents et à la gestion.</p>
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Trésor Public Bénin. Tous droits réservés.</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rapports - Plateforme Financière</title>
+    <link rel="stylesheet" href="class1.css">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <header>
+        <div class="header-top">
+            <div class="header-content">
+                <img src="logo.png" alt="Logo de l'entreprise" id="logo">
+                <div class="site-branding">
+                    <h1>Gestion Financière</h1>
+                    <p>Votre partenaire pour une gestion optimisée</p>
+                </div>
+            </div>
+            <div class="header-utility">
+                <div class="search-bar">
+                    <input type="search" placeholder="Rechercher...">
+                    <button type="submit">Rechercher</button>
+                </div>
+                <nav class="utility-nav">
+                    <ul>
+                        <li><a href="page_aide.html">Aide</a></li>
+                        <li><a href="page_contact.html">Contact</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="index.html">Accueil</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropbtn">Participants & Activités</a>
+                    <div class="dropdown-content">
+                        <a href="inscription_part.php">Enregistrer un participant</a>
+                        <a href="gerer_participant.html">Gérer les participants</a>
+                        <a href="creer_activite.html">Créer une activité</a>
+                        <a href="gerer_activite.html">Gérer les activités</a>
+                    </div>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropbtn">Tableaux de bord</a>
+                    <div class="dropdown-content">
+                        <a href="tableau_de_bord_financier.html">Tableau de bord financier</a>
+                        <a href="#">Autres tableaux de bord</a>
+                    </div>
+                </li>
+                <li><a href="gerer_paiement.html">Paiements</a></li>
+                <li><a href="document.html">Documents</a></li>
+                <li><a href="rapports.html" class="active">Rapports</a></li>
+                <li><a href="parametres.html">Paramètres</a></li>
+                <li><a href="mon_profil.html">Mon Profil</a></li>
+                <li><a href="login.html">Connexion</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="dashboard-section">
+            <h2>Générer des Rapports</h2>
+            <p class="section-description">Sélectionnez les options pour générer vos rapports financiers personnalisés.</p>
+
+            <form action="#" method="get">
+                <fieldset>
+                    <legend>Options de Rapport</legend>
+                    <div class="form-group">
+                        <label for="type-rapport">Type de Rapport:</label>
+                        <select id="type-rapport" name="type_rapport" required>
+                            <option value="">Choisir un type de rapport</option>
+                            <option value="revenus-depenses">Revenus vs Dépenses</option>
+                            <option value="flux-tresorerie">Flux de trésorerie</option>
+                            <option value="bilan">Bilan</option>
+                            <option value="activites">Rapport d'activités</option>
+                            <option value="personnalise">Rapport personnalisé</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="periode-debut">Période de début:</label>
+                        <input type="date" id="periode-debut" name="periode_debut" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="periode-fin">Période de fin:</label>
+                        <input type="date" id="periode-fin" name="periode_fin" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="format-export">Format d'exportation:</label>
+                        <select id="format-export" name="format_export">
+                            <option value="pdf">PDF</option>
+                            <option value="excel">Excel (CSV)</option>
+                            <option value="html">HTML</option>
+                        </select>
+                    </div>
+                </fieldset>
+                <div class="form-actions">
+                    <button type="submit" class="btn primary">Générer le Rapport</button>
+                    <button type="reset" class="btn secondary">Effacer</button>
+                </div>
+            </form>
+
+            <hr>
+
+            <h3>Rapports Récents</h3>
+            <p>Voici une liste de vos rapports récemment générés. Cliquez pour télécharger.</p>
+            <ul>
+                <li><a href="#">Rapport Revenus-Dépenses - Juin 2025 (PDF)</a></li>
+                <li><a href="#">Rapport de Trésorerie - Q2 2025 (Excel)</a></li>
+                <li><a href="#">Bilan Annuel - 2024 (PDF)</a></li>
+            </ul>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Plateforme de Gestion Financière. Tous droits réservés.</p>
+    </footer>
+</body>
+</html>

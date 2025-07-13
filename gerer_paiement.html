@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gérer les Paiements - Plateforme Financière</title>
+    <link rel="stylesheet" href="class1.css">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <header>
+        <div class="header-top">
+            <div class="header-content">
+                <img src="logo.png" alt="Logo de l'entreprise" id="logo">
+                <div class="site-branding">
+                    <h1>Plateforme de Gestion Financière</h1>
+                    <p>Votre partenaire pour une gestion optimisée</p>
+                </div>
+            </div>
+            <div class="header-utility">
+                <div class="search-bar">
+                    <input type="search" placeholder="Rechercher...">
+                    <button type="submit">Rechercher</button>
+                </div>
+                <nav class="utility-nav">
+                    <ul>
+                        <li><a href="page_aide.html">Aide</a></li>
+                        <li><a href="page_contact.html">Contact</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="index.html">Accueil</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropbtn">Participants & Activités</a>
+                    <div class="dropdown-content">
+                        <a href="inscription-part.php">Enregistrer un participant</a>
+                        <a href="gerer_participant.html">Gérer les participants</a>
+                        <a href="creer_activite.html">Créer une activité</a>
+                        <a href="gerer_activite.html">Gérer les activités</a>
+                    </div>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropbtn active">Tableaux de bord</a>
+                    <div class="dropdown-content">
+                        <a href="tableau_de_bord_financier.html">Tableau de bord financier</a>
+                        <a href="#">Autres tableaux de bord</a>
+                    </div>
+                </li>
+                <li><a href="gerer_paiement.html" class="active">Paiements</a></li>
+                <li><a href="document.html">Documents</a></li>
+                <li><a href="rapports.html">Rapports</a></li>
+                <li><a href="parametres.html">Paramètres</a></li>
+                <li><a href="login.html">Connexion</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="data-management-section">
+            <h2>Gérer les Paiements</h2>
+            <p class="section-description">Suivez l'état des paiements, lancez des traitements et accédez aux détails.</p>
+
+            <div class="actions-top-bar">
+                <select class="filter-select" style="min-width: 200px;">
+                    <option value="">Sélectionner une Activité</option>
+                    <option value="act001">Projet Alpha</option>
+                    <option value="act002">Vente Logiciel Beta</option>
+                    <option value="act003">Consultation Marketing</option>
+                </select>
+                <button class="btn primary">Calculer et Préparer Paiements</button>
+                <div class="filter-sort-options">
+                    <input type="text" class="search-input" placeholder="Rechercher par Participant...">
+                    <select class="filter-select">
+                        <option value="">Filtrer par Statut</option>
+                        <option value="en_attente">En attente</option>
+                        <option value="traite">Traité</option>
+                        <option value="paye">Payé</option>
+                        <option value="erreur">Erreur</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Activité</th>
+                            <th>Participant</th>
+                            <th>Titre</th>
+                            <th>Nb Jours/Copies</th>
+                            <th>Taux/Forfait</th>
+                            <th>Frais Dépl.</th>
+                            <th>Montant Total</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Exemple de données de paiement (dynamique en backend) -->
+                        <tr>
+                            <td>Projet Alpha</td>
+                            <td>Dupont Jean</td>
+                            <td>Superviseur</td>
+                            <td>20 jours</td>
+                            <td>15 000 FCFA/jour</td>
+                            <td>50 000 FCFA</td>
+                            <td>350 000 FCFA</td>
+                            <td>En attente</td>
+                            <td>
+                                <button class="btn btn-small primary">Payer</button>
+                                <button class="btn btn-small btn-edit">Détails</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Vente Logiciel Beta</td>
+                            <td>Martin Sophie</td>
+                            <td>Membre</td>
+                            <td>10 copies</td>
+                            <td>2 500 FCFA/copie</td>
+                            <td>0 FCFA</td>
+                            <td>25 000 FCFA</td>
+                            <td>Payé</td>
+                            <td>
+                                <button class="btn btn-small btn-secondary">Historique</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Consultation Marketing</td>
+                            <td>Traoré Fatoumata</td>
+                            <td>Président</td>
+                            <td>5 jours</td>
+                            <td>50 000 FCFA/jour + Forfait 100K</td>
+                            <td>25 000 FCFA</td>
+                            <td>375 000 FCFA</td>
+                            <td>En attente</td>
+                            <td>
+                                <button class="btn btn-small primary">Payer</button>
+                                <button class="btn btn-small btn-edit">Détails</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="pagination">
+                <a href="#">Précédent</a>
+                <a href="#">1</a>
+                <a href="#">2</a>
+                <a href="#">3</a>
+                <a href="#">Suivant</a>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn primary big-btn">Générer les Ordres de Virement pour la sélection</button>
+                <button class="btn secondary big-btn">Générer la Synthèse des Virements</button>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Plateforme de Gestion Financière. Tous droits réservés.</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,411 @@
+/* Styles généraux du corps et du conteneur */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Police moderne et lisible */
+    line-height: 1.6; /* Espacement des lignes pour une meilleure lisibilité */
+    margin: 0;
+    padding: 0;
+    background-color: #f4f7f6; /* Arrière-plan légèrement gris */
+    color: #333; /* Couleur de texte principale */
+}
+
+main {
+    padding: 20px;
+    max-width: 1200px; /* Largeur maximale du contenu principal */
+    margin: 20px auto; /* Centrer le contenu et ajouter de l'espace */
+    background-color: #fff; /* Fond blanc pour le contenu */
+    border-radius: 8px; /* Coins arrondis */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Légère ombre pour donner de la profondeur */
+}
+
+/* Styles de l'en-tête */
+header {
+    background-color: #004d40; /* Vert foncé/Bleu canard pour l'en-tête */
+    color: #ffffff;
+    padding: 15px 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Ombre légère en bas de l'en-tête */
+}
+
+.header-top {
+    display: flex;
+    justify-content: space-between; /* Espacer les éléments du haut de l'en-tête */
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    flex-wrap: wrap; /* Permet le retour à la ligne sur petits écrans */
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Espacement entre les éléments du contenu de l'en-tête */
+}
+
+#logo {
+    height: 70px; /* Taille du logo */
+    width: auto;
+}
+
+.site-branding h1 {
+    margin: 0;
+    font-size: 1.8em;
+    font-weight: 600;
+}
+
+.site-branding p {
+    margin: 5px 0 0;
+    font-size: 0.9em;
+    opacity: 0.9;
+}
+
+.header-utility {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 10px; /* Espace si les éléments se cassent sur plusieurs lignes */
+}
+
+.search-bar {
+    display: flex;
+    border-radius: 5px;
+    overflow: hidden; /* Assure que le bouton et l'input restent dans les coins arrondis */
+}
+
+.search-bar input[type="search"] {
+    border: none;
+    padding: 8px 12px;
+    font-size: 0.9em;
+    outline: none; /* Supprime le contour bleu au focus */
+    width: 200px;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+.search-bar button {
+    background-color: #00796b; /* Vert canard moyen */
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    cursor: pointer; /* Indique que le bouton est cliquable */
+    transition: background-color 0.3s ease; /* Transition douce au survol */
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.search-bar button:hover {
+    background-color: #005f56; /* Vert canard plus foncé au survol */
+}
+
+.utility-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 15px;
+}
+
+.utility-nav a {
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 0.9em;
+    padding: 5px 0;
+    transition: color 0.3s ease;
+}
+
+.utility-nav a:hover {
+    color: #a7ffeb; /* Vert canard clair au survol */
+}
+
+.main-nav {
+    background-color: #00695c; /* Vert canard légèrement plus clair que l'en-tête */
+    margin-top: 15px;
+}
+
+.main-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center; /* Centrer les éléments du menu principal */
+    max-width: 1200px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+}
+
+.main-nav li {
+    position: relative; /* Nécessaire pour le positionnement du dropdown */
+}
+
+.main-nav a {
+    color: #ffffff;
+    text-decoration: none;
+    padding: 15px 20px;
+    display: block;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.main-nav a:hover,
+.main-nav a.active {
+    background-color: #004d40; /* Couleur d'arrière-plan au survol ou si actif */
+    color: #a7ffeb;
+}
+
+/* Styles spécifiques du menu déroulant (Dropdown) */
+.dropdown-content {
+    display: none; /* Caché par défaut */
+    position: absolute;
+    background-color: #004d40; /* Fond du menu déroulant */
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1; /* Assure que le menu est au-dessus des autres éléments */
+    border-radius: 0 0 5px 5px;
+}
+
+.dropdown-content a {
+    color: white;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+}
+
+.dropdown-content a:hover {
+    background-color: #005f56; /* Couleur de survol pour les éléments du dropdown */
+}
+
+.dropdown:hover .dropdown-content {
+    display: block; /* Affiche le menu déroulant au survol */
+}
+
+/* Styles de la section du formulaire */
+.form-section {
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.form-section h2 {
+    text-align: center;
+    color: #004d40; /* Couleur de titre principale */
+    font-size: 2.2em;
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+.form-description {
+    text-align: center;
+    color: #666;
+    margin-bottom: 30px;
+    font-size: 1.1em;
+}
+
+form {
+    display: flex;
+    flex-direction: column; /* Les fieldsets s'empilent verticalement */
+    gap: 25px; /* Espacement entre les fieldsets */
+}
+
+fieldset {
+    border: 1px solid #e0e0e0; /* Bordure légère pour les groupes de champs */
+    border-radius: 8px;
+    padding: 25px;
+    background-color: #fdfdfd; /* Fond légèrement différent pour les fieldsets */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03); /* Légère ombre pour les fieldsets */
+}
+
+legend {
+    font-size: 1.3em;
+    font-weight: 600;
+    color: #00695c; /* Couleur du titre du fieldset */
+    padding: 0 10px;
+    margin-left: -5px; /* Ajustement visuel */
+    background-color: #fdfdfd; /* Fait correspondre le fond du fieldset */
+    border-radius: 5px;
+}
+
+.form-group {
+    margin-bottom: 20px; /* Espacement entre chaque groupe label/input */
+    display: flex;
+    flex-direction: column; /* Le label et l'input s'empilent */
+}
+
+.form-group label {
+    font-weight: 500;
+    color: #555;
+    margin-bottom: 8px; /* Espacement entre le label et l'input */
+    display: block; /* Assure que le label prend sa propre ligne */
+    font-size: 1em;
+}
+
+.form-group input[type="text"],
+.form-group input[type="date"],
+.form-group input[type="number"],
+.form-group textarea,
+.form-group select {
+    width: 100%; /* Les champs prennent toute la largeur disponible */
+    padding: 12px 15px; /* Espacement interne des champs */
+    border: 1px solid #ced4da; /* Bordure par défaut */
+    border-radius: 5px; /* Coins légèrement arrondis */
+    font-size: 1em;
+    color: #333;
+    background-color: #ffffff;
+    box-sizing: border-box; /* Inclut le padding et la bordure dans la largeur/hauteur */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Transitions douces au focus */
+}
+
+.form-group input[type="text"]::placeholder,
+.form-group textarea::placeholder {
+    color: #a0a0a0; /* Couleur plus claire pour le texte de placeholder */
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="date"]:focus,
+.form-group input[type="number"]:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    border-color: #00796b; /* Bordure verte canard au focus */
+    outline: none; /* Supprime le contour par défaut du navigateur */
+    box-shadow: 0 0 0 3px rgba(0, 121, 107, 0.2); /* Ombre lumineuse au focus */
+}
+
+.form-group textarea {
+    resize: vertical; /* Permet de redimensionner verticalement uniquement */
+    min-height: 80px; /* Hauteur minimale pour les zones de texte */
+}
+
+.form-group small {
+    color: #777;
+    font-size: 0.85em;
+    margin-top: 5px;
+    display: block;
+}
+
+/* Actions du formulaire (boutons) */
+.form-actions {
+    display: flex;
+    justify-content: flex-end; /* Aligner les boutons à droite */
+    gap: 15px; /* Espacement entre les boutons */
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee; /* Ligne de séparation au-dessus des boutons */
+}
+
+.btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 600;
+    text-decoration: none; /* Pour les balises <a> utilisées comme boutons */
+    text-align: center;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.btn.primary {
+    background-color: #00796b; /* Bouton principal vert canard */
+    color: #ffffff;
+    box-shadow: 0 2px 6px rgba(0, 121, 107, 0.2);
+}
+
+.btn.primary:hover {
+    background-color: #005f56; /* Couleur plus foncée au survol */
+    transform: translateY(-1px); /* Léger soulèvement au survol */
+    box-shadow: 0 4px 8px rgba(0, 121, 107, 0.3);
+}
+
+.btn.secondary {
+    background-color: #e0e0e0; /* Bouton secondaire gris clair */
+    color: #555;
+    border: 1px solid #ccc;
+}
+
+.btn.secondary:hover {
+    background-color: #d0d0d0;
+    color: #333;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Styles du pied de page */
+footer {
+    text-align: center;
+    padding: 20px;
+    margin-top: 40px;
+    background-color: #004d40;
+    color: #ffffff;
+    font-size: 0.9em;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Ajustements pour la réactivité (écrans plus petits) */
+@media (max-width: 768px) {
+    .header-top {
+        flex-direction: column; /* Empilement vertical des éléments de l'en-tête */
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .site-branding h1 {
+        font-size: 1.5em;
+    }
+
+    .header-utility {
+        width: 100%;
+        justify-content: space-between;
+        margin-top: 15px;
+    }
+
+    .search-bar {
+        width: 100%;
+    }
+
+    .search-bar input[type="search"] {
+        width: calc(100% - 70px); /* Ajuste la largeur de l'input de recherche */
+    }
+
+    .main-nav ul {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .main-nav li {
+        width: 100%;
+        text-align: center;
+    }
+
+    .dropdown-content {
+        position: static; /* Le menu déroulant s'affiche normalement dans le flux */
+        width: 100%;
+        border-radius: 0;
+    }
+
+    .form-actions {
+        flex-direction: column; /* Les boutons s'empilent verticalement */
+        align-items: stretch;
+    }
+
+    .btn {
+        width: 100%; /* Les boutons prennent toute la largeur */
+    }
+}
+
+@media (max-width: 480px) {
+    .form-section {
+        padding: 20px;
+    }
+
+    fieldset {
+        padding: 15px;
+    }
+
+    .form-section h2 {
+        font-size: 1.8em;
+    }
+
+    .form-description {
+        font-size: 0.95em;
+    }
+}

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Profil - Plateforme Financière</title>
+    <link rel="stylesheet" href="class1.css">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <header>
+        <div class="header-top">
+            <div class="header-content">
+                <img src="logo.png" alt="Logo de l'entreprise" id="logo">
+                <div class="site-branding">
+                    <h1>Plateforme de Gestion Financière</h1>
+                    <p>Votre partenaire pour une gestion optimisée</p>
+                </div>
+            </div>
+            <div class="header-utility">
+                <div class="search-bar">
+                    <input type="search" placeholder="Rechercher...">
+                    <button type="submit">Rechercher</button>
+                </div>
+                <nav class="utility-nav">
+                    <ul>
+                        <li><a href="page_aide.html">Aide</a></li>
+                        <li><a href="page_contact.html">Contact</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="accueil.html">Accueil</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropbtn">Participants & Activités</a>
+                    <div class="dropdown-content">
+                        <a href="inscription_part.php">Enregistrer un participant</a>
+                        <a href="gerer_participants.html">Gérer les participants</a>
+                        <a href="creer_activite.html">Créer une activité</a>
+                        <a href="gerer_activite.html">Gérer les activités</a>
+                    </div>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropbtn">Tableaux de bord</a>
+                    <div class="dropdown-content">
+                        <a href="tableau_de_bord_financier.html">Tableau de bord financier</a>
+                        <a href="#">Autres tableaux de bord</a>
+                    </div>
+                </li>
+                <li><a href="gerer_paiement.html">Paiements</a></li>
+                <li><a href="document.html">Documents</a></li>
+                <li><a href="rapports.html">Rapports</a></li>
+                <li><a href="parametres.html">Paramètres</a></li>
+                <li><a href="mon_profil.html" class="active">Mon Profil</a></li>
+                <li><a href="login.html">Déconnexion</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="form-section">
+            <h2>Mon Profil</h2>
+            <p class="form-description">Mettez à jour vos informations personnelles et vos préférences.</p>
+
+            <form action="#" method="post">
+                <fieldset>
+                    <legend>Informations du Compte</legend>
+                    <div class="form-group">
+                        <label for="profile-username">Nom d'utilisateur:</label>
+                        <input type="text" id="profile-username" name="profile_username" value="financier.bénin" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="profile-email">Email:</label>
+                        <input type="email" id="profile-email" name="profile_email" value="financier@tresorpub.bj" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="profile-nom">Nom:</label>
+                        <input type="text" id="profile-nom" name="profile_nom" value="DUVAL">
+                    </div>
+                    <div class="form-group">
+                        <label for="profile-prenom">Prénom:</label>
+                        <input type="text" id="profile-prenom" name="profile_prenom" value="Marc">
+                    </div>
+                    <div class="form-group">
+                        <label for="profile-telephone">Téléphone:</label>
+                        <input type="tel" id="profile-telephone" name="profile_telephone" value="+229 97000000">
+                    </div>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Changer le Mot de Passe</legend>
+                    <div class="form-group password-toggle-container">
+                        <label for="current-password-profile">Mot de passe actuel:</label>
+                        <input type="password" id="current-password-profile" name="current_password_profile" required>
+                    </div>
+                    <div class="form-group password-toggle-container">
+                        <label for="new-password-profile">Nouveau mot de passe:</label>
+                        <input type="password" id="new-password-profile" name="new_password_profile" required>
+                    </div>
+                    <div class="form-group password-toggle-container">
+                        <label for="confirm-new-password-profile">Confirmer le nouveau mot de passe:</label>
+                        <input type="password" id="confirm-new-password-profile" name="confirm_new_password_profile" required>
+                    </div>
+                </fieldset>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn primary">Enregistrer les Modifications</button>
+                    <button type="reset" class="btn secondary">Annuler</button>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Plateforme de Gestion Financière. Tous droits réservés.</p>
+    </footer>
+</body>
+</html>
