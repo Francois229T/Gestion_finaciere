@@ -29,13 +29,13 @@ if ($activite_id > 0) {
 if ($activite_id > 0) { // On ne récupère les participants que si l'activité est valide
     try {
         // Récupérer les personnes physiques
-        $stmt_physiques = $mysqlClient->query("SELECT id, nom_complet AS nom_display, 'physique' AS type FROM personnes_physiques ORDER BY nom_complet");
+        $stmt_physiques = $mysqlClient->query("SELECT participant_id, nom AS nom_display, 'individu' AS type FROM personnes_physiques ORDER BY nom ");
         while ($row = $stmt_physiques->fetch(PDO::FETCH_ASSOC)) {
             $participants_list[] = $row;
         }
 
         // Récupérer les personnes morales
-        $stmt_morales = $mysqlClient->query("SELECT id, raison_sociale AS nom_display, 'morale' AS type FROM personnes_morales ORDER BY raison_sociale");
+        $stmt_morales = $mysqlClient->query("SELECT participant_id, denomination AS nom_display, 'personne_morale' AS type FROM personnes_morales ORDER BY denomination");
         while ($row = $stmt_morales->fetch(PDO::FETCH_ASSOC)) {
             $participants_list[] = $row;
         }
@@ -70,11 +70,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $activite_id > 0) {
                         activite_id,
                         participant_id,
                         type_participant,
-                        taux_journalier_alloue,
-                        forfait_alloue,
-                        frais_deplacement_alloue,
-                        nb_jours_deplacement_alloue,
-                        nb_jours_copies_alloue,
+                        taux_journalier_copie,
+                        forfait_participant,
+                        frais_deplacement,
+                        nb_jours_deplacement,
+                        nb_jours_copies,
                         date_enregistrement
                     ) VALUES (
                         :activite_id,
@@ -181,9 +181,47 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $activite_id > 0) {
     </style>
 </head>
 <body>
-    <header>
-        </header>
-
+<header>
+        <div class="header-top">
+            <div class="header-content">
+                <img src="tresorpubbenin.png" alt="Logo Trésor Public Bénin" id="logo">
+                <div class="site-branding">
+                    <h1>Plateforme de Gestion des Paiements</h1>
+                    <p>Bienvenue sur la plateforme de paiement des activités</p>
+                </div>
+            </div>
+            <div class="header-utility">
+                <div class="search-bar">
+                    <input type="search" placeholder="Rechercher une activité..." aria-label="Rechercher">
+                    <button type="submit">Rechercher</button>
+                </div>
+                <nav class="utility-nav">
+                    <ul>
+                        <li><a href="page_aide.html">Aide</a></li>
+                        <li><a href="page_contact.html">Contact</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="accueil.html">Accueil Public</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropbtn">Activités</a>
+                    <div class="dropdown-content">
+                        <a href="creer_activite.php">Créer Activité</a>
+                        <a href="gerer_activite.php">Gérer Activité</a>
+                    </div>
+                </li>
+                <li><a href="#">Participants</a></li>
+                <li><a href="#">Paiements</a></li>
+                <li><a href="#">Documents</a></li>
+                <li><a href="dashboard_financier.html" class="active">Tableau de Bord</a></li>
+                <li><a href="#">Mon Profil</a></li>
+                <li><a href="login.html">Déconnexion</a></li>
+            </ul>
+        </nav>
+    </header>
     <main>
         <section class="add-participant-form-section">
             <h2>Ajouter un Participant à l'Activité : <?php echo $activity_name; ?></h2>

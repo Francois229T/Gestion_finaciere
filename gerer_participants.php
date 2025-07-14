@@ -37,7 +37,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'delete_participation' && isse
             ':participation_id' => $participation_id_to_delete,
             ':activite_id'      => $activite_id
         ]);
-        $pdo->commit();
+        $mysqlClient->commit();
         $success_message = "La participation a été supprimée avec succès.";
         // Rediriger pour éviter la re-soumission du DELETE
         header("Location: gerer_participants.php?activite_id={$activite_id}&msg=" . urlencode($success_message));
@@ -58,17 +58,17 @@ if (isset($_GET['msg'])) {
 if ($activite_id > 0) {
     try {
         $stmt_current_participants = $mysqlClient->prepare("
-            SELECT p.id, p.type_participant, p.participant_id,
+            SELECT p.id, p.type_participants, p.participant_id,
                    CASE
-                       WHEN p.type_participant = 'physique' THEN pp.nom_complet
-                       WHEN p.type_participant = 'morale' THEN pm.raison_sociale
+                       WHEN p.type_participants = 'individu' THEN pp.nom + pp.prenom
+                       WHEN p.type_participants = 'personne_morale' THEN pm.denomination
                        ELSE 'Inconnu'
                    END AS nom_participant,
-                   p.taux_journalier_alloue, p.forfait_alloue, p.frais_deplacement_alloue,
-                   p.nb_jours_deplacement_alloue, p.nb_jours_copies_alloue
+                   p.taux_journalier_copie, p.forfait_participant, p.frais_deplacement,
+                   p.nb_jours_deplacement, p.nb_jours_copies
             FROM participations p
-            LEFT JOIN personnes_physiques pp ON p.participant_id = pp.id AND p.type_participant = 'physique'
-            LEFT JOIN personnes_morales pm ON p.participant_id = pm.id AND p.type_participant = 'morale'
+            LEFT JOIN personnes_physiques pp ON p.participant_id = pp.participant_id AND p.type_participants = 'individu'
+            LEFT JOIN personnes_morales pm ON p.participant_id = pm.participant_id AND p.type_participants = 'personne_morale'
             WHERE p.activite_id = :activite_id
             ORDER BY nom_participant
         ");
@@ -167,8 +167,47 @@ if ($activite_id > 0) {
     </style>
 </head>
 <body>
-    <header>
-        </header>
+<header>
+        <div class="header-top">
+            <div class="header-content">
+                <img src="tresorpubbenin.png" alt="Logo Trésor Public Bénin" id="logo">
+                <div class="site-branding">
+                    <h1>Plateforme de Gestion des Paiements</h1>
+                    <p>Bienvenue sur la plateforme de paiement des activités</p>
+                </div>
+            </div>
+            <div class="header-utility">
+                <div class="search-bar">
+                    <input type="search" placeholder="Rechercher une activité..." aria-label="Rechercher">
+                    <button type="submit">Rechercher</button>
+                </div>
+                <nav class="utility-nav">
+                    <ul>
+                        <li><a href="page_aide.html">Aide</a></li>
+                        <li><a href="page_contact.html">Contact</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="accueil.html">Accueil Public</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropbtn">Activités</a>
+                    <div class="dropdown-content">
+                        <a href="creer_activite.php">Créer Activité</a>
+                        <a href="gerer_activite.php">Gérer Activité</a>
+                    </div>
+                </li>
+                <li><a href="#">Participants</a></li>
+                <li><a href="#">Paiements</a></li>
+                <li><a href="#">Documents</a></li>
+                <li><a href="dashboard_financier.html" class="active">Tableau de Bord</a></li>
+                <li><a href="#">Mon Profil</a></li>
+                <li><a href="login.html">Déconnexion</a></li>
+            </ul>
+        </nav>
+    </header>
 
     <main>
         <section class="activity-participants-section">
