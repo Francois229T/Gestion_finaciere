@@ -38,7 +38,7 @@ if ($activite_id > 0) { // On ne récupère les participants que si l'activité 
         ELSE NULL
     END AS nom_participant,
     CASE
-        WHEN p.type = 'physique' THEN pp.prenom
+        WHEN p.type = 'individu' THEN pp.prenom
         ELSE NULL
     END AS prenom_participant,
     p.type,
@@ -78,9 +78,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $activite_id > 0) {
     $frais_deplacement      = trim($_POST['frais_deplacement'] ?? '');
     $nb_jours_deplacement   = trim($_POST['nb_jours_deplacement'] ?? '');
     $nb_jours_copies        = trim($_POST['nb_jours_copies'] ?? '');
+    $titre_participant      = trim($_POST['titre_participant'] ?? '');
     
     $participant_parts = explode('_', $participant_full_id);
     $type_participant = $participant_parts[0] ?? '';
+
     $participant_id = (int)($participant_parts[1] ?? 0);
     $compte_id = (int)($participant_parts[2] ?? 0);
 
@@ -88,6 +90,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $activite_id > 0) {
     if ($participant_id === 0 || empty($type_participant)) {
         $error_message = "Veuillez sélectionner un participant valide.";
     } else {
+        
         try {
             $mysqlClient->beginTransaction();
 
@@ -114,7 +117,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $activite_id > 0) {
                         :frais_deplacement,
                         :nb_jours_deplacement,
                         :nb_jours_copies,
-                        :date_enregistrement
+                        NOW()
                     )";
 
             $stmt = $mysqlClient->prepare($sql);
@@ -129,8 +132,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $activite_id > 0) {
                 ':forfait'              => !empty($forfait) ? (float)$forfait : NULL,
                 ':frais_deplacement'    => !empty($frais_deplacement) ? (float)$frais_deplacement : NULL,
                 ':nb_jours_deplacement' => !empty($nb_jours_deplacement) ? (int)$nb_jours_deplacement : NULL,
-                ':nb_jours_copies'      => !empty($nb_jours_copies) ? (int)$nb_jours_copies : NULL,
-                ':date_enregistrement'  => NOW()
+                ':nb_jours_copies'      => !empty($nb_jours_copies) ? (int)$nb_jours_copies : NULL
             ]);
 
             $mysqlClient->commit();
@@ -138,8 +140,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $activite_id > 0) {
 
             // Après l'ajout réussi, redirigez l'utilisateur vers la page de gestion des participants
             // pour voir la liste mise à jour.
-            header("Location: gerer_participants.php?activite_id={$activite_id}&msg=" . urlencode($success_message));
-            exit();
+            //header("Location: gerer_participants.php?activite_id={$activite_id}&msg=" . urlencode($success_message));
+            //exit();
 
         } catch (PDOException $e) {
             $mysqlClient->rollBack();
@@ -269,7 +271,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $activite_id > 0) {
                 <p class="message-erreur">Une erreur est survenue. L'activité n'a pas été spécifiée.</p>
                 <p class="message-erreur">Veuillez retourner à la <a href="gerer_activites.php">liste des activités</a>.</p>
             <?php else: ?>
-                <form action="ajouter_participant_activite.php?activite_id=<?php echo $activite_id; ?>" method="post">
+                <form action="ajouter_participant.php?activite_id=<?php echo $activite_id; ?>" method="post">
                     <div class="form-group">
                         <label for="participant_id">Sélectionner un participant :</label>
                         <select id="participant_id" name="participant_id" required>

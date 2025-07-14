@@ -58,17 +58,17 @@ if (isset($_GET['msg'])) {
 if ($activite_id > 0) {
     try {
         $stmt_current_participants = $mysqlClient->prepare("
-            SELECT p.id, p.type_participants, p.participant_id,
+            SELECT p.id, p.type_participant, p.participant_id,
                    CASE
-                       WHEN p.type_participants = 'individu' THEN pp.nom + pp.prenom
-                       WHEN p.type_participants = 'personne_morale' THEN pm.denomination
+                       WHEN p.type_participant = 'individu' THEN pp.nom + pp.prenom
+                       WHEN p.type_participant = 'personne_morale' THEN pm.denomination
                        ELSE 'Inconnu'
                    END AS nom_participant,
                    p.taux_journalier_copie, p.forfait_participant, p.frais_deplacement,
                    p.nb_jours_deplacement, p.nb_jours_copies
             FROM participations p
-            LEFT JOIN personnes_physiques pp ON p.participant_id = pp.participant_id AND p.type_participants = 'individu'
-            LEFT JOIN personnes_morales pm ON p.participant_id = pm.participant_id AND p.type_participants = 'personne_morale'
+            LEFT JOIN personnes_physiques pp ON p.participant_id = pp.participant_id AND p.type_participant = 'individu'
+            LEFT JOIN personnes_morales pm ON p.participant_id = pm.participant_id AND p.type_participant = 'personne_morale'
             WHERE p.activite_id = :activite_id
             ORDER BY nom_participant
         ");
@@ -249,11 +249,11 @@ if ($activite_id > 0) {
                                 <tr>
                                     <td><?php echo htmlspecialchars($participant['nom_participant']); ?></td>
                                     <td><?php echo htmlspecialchars($participant['type_participant']); ?></td>
-                                    <td><?php echo htmlspecialchars($participant['taux_journalier_alloue'] ?? 'N/A'); ?></td>
-                                    <td><?php echo htmlspecialchars($participant['forfait_alloue'] ?? 'N/A'); ?></td>
-                                    <td><?php echo htmlspecialchars($participant['frais_deplacement_alloue'] ?? 'N/A'); ?></td>
-                                    <td><?php echo htmlspecialchars($participant['nb_jours_deplacement_alloue'] ?? 'N/A'); ?></td>
-                                    <td><?php echo htmlspecialchars($participant['nb_jours_copies_alloue'] ?? 'N/A'); ?></td>
+                                    <td><?php echo htmlspecialchars($participant['taux_journalier_copie'] ?? 'N/A'); ?></td>
+                                    <td><?php echo htmlspecialchars($participant['forfait_participant'] ?? 'N/A'); ?></td>
+                                    <td><?php echo htmlspecialchars($participant['frais_deplacement'] ?? 'N/A'); ?></td>
+                                    <td><?php echo htmlspecialchars($participant['nb_jours_deplacement'] ?? 'N/A'); ?></td>
+                                    <td><?php echo htmlspecialchars($participant['nb_jours_copies'] ?? 'N/A'); ?></td>
                                     <td class="action-buttons">
                                         <a href="modifier_participation.php?id=<?php echo htmlspecialchars($participant['id']); ?>&activite_id=<?php echo $activite_id; ?>" class="btn-modifier">Modifier</a>
                                         <button class="btn-supprimer" onclick="confirmDeleteParticipation(<?php echo htmlspecialchars($participant['id']); ?>, '<?php echo htmlspecialchars($participant['nom_participant']); ?>');">Supprimer</button>

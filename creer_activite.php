@@ -238,6 +238,8 @@ if (!empty($uploadError)) {
              ]);
              $mysqlClient->commit();
              echo "<p style='color: green;'>Activité insérée avec succès dans la base de données !</p>";
+            header("Location: gerer_participants.php");
+            exit();
 
 
     }catch (PDOException $e) {
@@ -292,7 +294,7 @@ if (!empty($uploadError)) {
                     <a href="#" class="dropbtn">Activités</a>
                     <div class="dropdown-content">
                         <a href="creer_activite.php">Créer Activité</a>
-                        <a href="gerer_activite.php">Gérer Activité</a>
+                        <a href="gerer_activites.php">Gérer Activité</a>
                     </div>
                 </li>
                 <li><a href="#">Participants</a></li>
