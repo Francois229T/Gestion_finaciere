@@ -277,6 +277,12 @@ if ($activite_id > 0) {
                 window.location.href = 'gerer_participants.php?activite_id=<?php echo $activite_id; ?>&action=delete_participation&participation_id=' + id;
             }
         }
+
+        function confirmParticipationUpdate(id, nomParticipant) {
+            if (confirm("Êtes-vous sûr de vouloir modifier " + nomParticipant + " participant de cette activité (ID participation: " + id + ") ?")) {
+                window.location.href = 'modifier_participant.php?activite_id=<?php echo $activite_id; ?>&action=update_participation&participation_id=' + id;
+            }
+        }
     </script>
 </body>
 </html>

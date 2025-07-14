@@ -1,6 +1,5 @@
 <?php
 require_once 'db.php'; 
-$activites = [];
 $error_message = '';
 $success_message = '';
 
