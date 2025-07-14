@@ -221,7 +221,7 @@ if ($activite_id > 0) {
             <?php endif; ?>
 
             <?php if ($activite_id === 0): ?>
-                <p class="message-erreur">Veuillez sélectionner une activité pour gérer ses participants depuis la <a href="lister_activites.php">liste des activités</a>.</p>
+                <p class="message-erreur">Veuillez sélectionner une activité pour gérer ses participants depuis la <a href="gerer_activites.php">liste des activités</a>.</p>
             <?php else: ?>
                 <p>
                     <a href="ajouter_participant.php?activite_id=<?php echo $activite_id; ?>" class="btn-ajouter">Ajouter un nouveau participant à cette activité</a>

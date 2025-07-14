@@ -4,44 +4,6 @@ $activites = [];
 $error_message = '';
 $success_message = '';
 
-// Gérer l'action de suppression si elle vient d'être déclenchée
-if (isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['id'])) {
-    $activity_id_to_delete = (int)$_GET['id'];
-
-    try {
-        $mysqlClient->beginTransaction();
-
-        // Étape 1: Supprimer les enregistrements liés dans d'autres tables (si elles existent)
-        // Par exemple, si vous avez une table 'participants' qui référence 'activites.id'
-        // Assurez-vous d'avoir une contrainte ON DELETE CASCADE sur votre base de données,
-        // ou supprimez manuellement les dépendances ici pour éviter des erreurs de clé étrangère.
-        // Exemple (si vous aviez une table participants liée à activites.id):
-        // $stmt_delete_participants = $pdo->prepare("DELETE FROM participants WHERE activite_id = :id");
-        // $stmt_delete_participants->execute([':id' => $activity_id_to_delete]);
-
-        // Étape 2: Supprimer l'activité principale
-        $stmt_delete_activity = $mysqlClient->prepare("DELETE FROM activites WHERE id = :id");
-        $stmt_delete_activity->execute([':id' => $activity_id_to_delete]);
-
-        $mysqlClient->commit();
-        $success_message = "L'activité (ID: {$activity_id_to_delete}) a été supprimée avec succès.";
-
-        // Rediriger pour éviter la re-soumission du DELETE si la page est rafraîchie
-        header("Location: lister_activites.php?msg=" . urlencode($success_message));
-        exit();
-
-    } catch (PDOException $e) {
-        $mysqlClient->rollBack();
-        $error_message = "Erreur lors de la suppression de l'activité (ID: {$activity_id_to_delete}) : " . htmlspecialchars($e->getMessage());
-    }
-}
-
-// Récupérer un message de succès depuis la redirection (si une suppression a eu lieu)
-if (isset($_GET['msg'])) {
-    $success_message = htmlspecialchars($_GET['msg']);
-}
-
-
 // Récupération de toutes les activités (le code principal reste le même)
 try {
     $stmt = $mysqlClient->prepare("SELECT * FROM activites ORDER BY id DESC");
@@ -170,7 +132,7 @@ try {
                     <a href="#" class="dropbtn">Activités</a>
                     <div class="dropdown-content">
                         <a href="creer_activite.php">Créer Activité</a>
-                        <a href="lister_activites.php">Gérer Activités</a> </div>
+                        <a href="gerer_activite.php">Gérer Activités</a> </div>
                 </li>
                 <li><a href="#">Participants</a></li>
                 <li><a href="#">Paiements</a></li>
@@ -249,7 +211,7 @@ try {
     <script>
         function confirmDelete(id, nom) {
             if (confirm("Êtes-vous sûr de vouloir supprimer l'activité '" + nom + "' (ID: " + id + ") ? Cette action est irréversible.")) {
-                window.location.href = 'lister_activites.php?action=delete&id=' + id;
+                window.location.href = 'supprimer_activite.php?action=delete&id=' + id;
             }
         }
     </script>
