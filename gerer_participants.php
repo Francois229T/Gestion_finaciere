@@ -26,28 +26,6 @@ if ($activite_id > 0) {
     }
 }
 
-// --- 2. Gérer la suppression d'une participation ---
-if (isset($_GET['action']) && $_GET['action'] === 'delete_participation' && isset($_GET['participation_id']) && $activite_id > 0) {
-    $participation_id_to_delete = (int)$_GET['participation_id'];
-
-    try {
-        $mysqlClient->beginTransaction();
-        $stmt_delete = $mysqlClient->prepare("DELETE FROM participations WHERE id = :participation_id AND activite_id = :activite_id");
-        $stmt_delete->execute([
-            ':participation_id' => $participation_id_to_delete,
-            ':activite_id'      => $activite_id
-        ]);
-        $mysqlClient->commit();
-        $success_message = "La participation a été supprimée avec succès.";
-        // Rediriger pour éviter la re-soumission du DELETE
-        header("Location: gerer_participants.php?activite_id={$activite_id}&msg=" . urlencode($success_message));
-        exit();
-    } catch (PDOException $e) {
-        $pdo->rollBack();
-        $error_message = "Erreur lors de la suppression de la participation : " . htmlspecialchars($e->getMessage());
-    }
-}
-
 // Récupérer un message de succès depuis la redirection (si une suppression a eu lieu)
 if (isset($_GET['msg'])) {
     $success_message = htmlspecialchars($_GET['msg']);
@@ -60,12 +38,12 @@ if ($activite_id > 0) {
         $stmt_current_participants = $mysqlClient->prepare("
             SELECT p.id, p.type_participant, p.participant_id,
                    CASE
-                       WHEN p.type_participant = 'individu' THEN pp.nom + pp.prenom
+                       WHEN p.type_participant = 'individu' THEN CONCAT(pp.prenom,' ',pp.nom) 
                        WHEN p.type_participant = 'personne_morale' THEN pm.denomination
                        ELSE 'Inconnu'
                    END AS nom_participant,
                    p.taux_journalier_copie, p.forfait_participant, p.frais_deplacement,
-                   p.nb_jours_deplacement, p.nb_jours_copies
+                   p.nb_jours_deplacement, p.nb_jours_copies, p.titre
             FROM participations p
             LEFT JOIN personnes_physiques pp ON p.participant_id = pp.participant_id AND p.type_participant = 'individu'
             LEFT JOIN personnes_morales pm ON p.participant_id = pm.participant_id AND p.type_participant = 'personne_morale'
@@ -196,7 +174,7 @@ if ($activite_id > 0) {
                     <a href="#" class="dropbtn">Activités</a>
                     <div class="dropdown-content">
                         <a href="creer_activite.php">Créer Activité</a>
-                        <a href="gerer_activite.php">Gérer Activité</a>
+                        <a href="gerer_activites.php">Gérer Activité</a>
                     </div>
                 </li>
                 <li><a href="#">Participants</a></li>
@@ -236,6 +214,7 @@ if ($activite_id > 0) {
                             <tr>
                                 <th>Participant</th>
                                 <th>Type</th>
+                                <th>Titre du participant</th>
                                 <th>Taux Journalier</th>
                                 <th>Forfait</th>
                                 <th>Frais Déplacement</th>
@@ -249,6 +228,7 @@ if ($activite_id > 0) {
                                 <tr>
                                     <td><?php echo htmlspecialchars($participant['nom_participant']); ?></td>
                                     <td><?php echo htmlspecialchars($participant['type_participant']); ?></td>
+                                    <td><?php echo htmlspecialchars($participant['titre']); ?></td>
                                     <td><?php echo htmlspecialchars($participant['taux_journalier_copie'] ?? 'N/A'); ?></td>
                                     <td><?php echo htmlspecialchars($participant['forfait_participant'] ?? 'N/A'); ?></td>
                                     <td><?php echo htmlspecialchars($participant['frais_deplacement'] ?? 'N/A'); ?></td>
@@ -274,7 +254,7 @@ if ($activite_id > 0) {
         function confirmDeleteParticipation(id, nomParticipant) {
             if (confirm("Êtes-vous sûr de vouloir retirer " + nomParticipant + " de cette activité (ID participation: " + id + ") ?")) {
                 // Redirige vers cette même page avec l'action de suppression
-                window.location.href = 'gerer_participants.php?activite_id=<?php echo $activite_id; ?>&action=delete_participation&participation_id=' + id;
+                window.location.href = 'supprimer_participant.php?activite_id=<?php echo $activite_id; ?>&action=delete_participation&participation_id=' + id;
             }
         }
 

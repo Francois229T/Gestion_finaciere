@@ -1,61 +1,57 @@
-/* Styles généraux du corps et du conteneur */
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Police moderne et lisible */
-    line-height: 1.6; /* Espacement des lignes pour une meilleure lisibilité */
+    font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f4f7f6; /* Arrière-plan légèrement gris */
-    color: #333; /* Couleur de texte principale */
+    background-color: #f4f7f6;
+    color: #333;
+    line-height: 1.6;
 }
 
-main {
-    padding: 20px;
-    max-width: 1200px; /* Largeur maximale du contenu principal */
-    margin: 20px auto; /* Centrer le contenu et ajouter de l'espace */
-    background-color: #fff; /* Fond blanc pour le contenu */
-    border-radius: 8px; /* Coins arrondis */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Légère ombre pour donner de la profondeur */
-}
-
-/* Styles de l'en-tête */
 header {
-    background-color: #004d40; /* Vert foncé/Bleu canard pour l'en-tête */
+    background-color: #004d40; /* Dark teal */
     color: #ffffff;
-    padding: 15px 0;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Ombre légère en bas de l'en-tête */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    padding-bottom: 0;
 }
 
+/* Header Top Section (Logo, Title, Search, Utility Links) */
 .header-top {
     display: flex;
-    justify-content: space-between; /* Espacer les éléments du haut de l'en-tête */
+    justify-content: space-between;
     align-items: center;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 20px;
-    flex-wrap: wrap; /* Permet le retour à la ligne sur petits écrans */
+    padding: 15px 20px;
+    flex-wrap: wrap;
+    gap: 20px;
 }
 
 .header-content {
     display: flex;
     align-items: center;
-    gap: 15px; /* Espacement entre les éléments du contenu de l'en-tête */
+    gap: 15px;
+    white-space: nowrap;
 }
 
 #logo {
-    height: 70px; /* Taille du logo */
-    width: auto;
+    max-width: 200px; /* Slightly smaller logo for top bar */
+    height: auto;
+}
+
+.site-branding {
+    text-align: left;
 }
 
 .site-branding h1 {
     margin: 0;
-    font-size: 1.8em;
-    font-weight: 600;
+    font-size: 1.8em; /* Slightly smaller font for better fit */
+    white-space: nowrap;
 }
 
 .site-branding p {
     margin: 5px 0 0;
     font-size: 0.9em;
-    opacity: 0.9;
+    opacity: 0.8;
 }
 
 .header-utility {
@@ -63,40 +59,39 @@ header {
     align-items: center;
     gap: 20px;
     flex-wrap: wrap;
-    margin-top: 10px; /* Espace si les éléments se cassent sur plusieurs lignes */
+    justify-content: flex-end;
 }
 
+/* Search Bar */
 .search-bar {
     display: flex;
     border-radius: 5px;
-    overflow: hidden; /* Assure que le bouton et l'input restent dans les coins arrondis */
+    overflow: hidden;
 }
 
 .search-bar input[type="search"] {
     border: none;
     padding: 8px 12px;
     font-size: 0.9em;
-    outline: none; /* Supprime le contour bleu au focus */
+    outline: none;
     width: 200px;
-    border-top-left-radius: 5px;
-    border-bottom-left-radius: 5px;
 }
 
 .search-bar button {
-    background-color: #00796b; /* Vert canard moyen */
+    background-color: #00796b; /* Teal */
     color: white;
     border: none;
     padding: 8px 15px;
-    cursor: pointer; /* Indique que le bouton est cliquable */
-    transition: background-color 0.3s ease; /* Transition douce au survol */
-    border-top-right-radius: 5px;
-    border-bottom-right-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.3s ease;
 }
 
 .search-bar button:hover {
-    background-color: #005f56; /* Vert canard plus foncé au survol */
+    background-color: #004d40; /* Darker teal */
 }
 
+/* Utility Navigation (Aide, Contact) */
 .utility-nav ul {
     list-style: none;
     padding: 0;
@@ -105,21 +100,23 @@ header {
     gap: 15px;
 }
 
-.utility-nav a {
+.utility-nav li a {
     color: #ffffff;
     text-decoration: none;
-    font-size: 0.9em;
-    padding: 5px 0;
+    font-size: 0.95em;
     transition: color 0.3s ease;
 }
 
-.utility-nav a:hover {
-    color: #a7ffeb; /* Vert canard clair au survol */
+.utility-nav li a:hover {
+    color: #e0e0e0;
 }
 
+
+/* Main Navigation Menu Styles (horizontal) */
 .main-nav {
-    background-color: #00695c; /* Vert canard légèrement plus clair que l'en-tête */
-    margin-top: 15px;
+    background-color: #005f52; /* Slightly lighter teal for nav background */
+    padding: 10px 0;
+    text-align: center;
 }
 
 .main-nav ul {
@@ -127,209 +124,222 @@ header {
     padding: 0;
     margin: 0;
     display: flex;
-    justify-content: center; /* Centrer les éléments du menu principal */
-    max-width: 1200px;
-    margin: 0 auto;
+    justify-content: center;
+    gap: 20px; /* Space between top-level items */
     flex-wrap: wrap;
 }
 
 .main-nav li {
-    position: relative; /* Nécessaire pour le positionnement du dropdown */
+    position: relative; /* Essential for dropdown positioning */
 }
 
-.main-nav a {
+.main-nav li a {
+    display: block;
     color: #ffffff;
     text-decoration: none;
-    padding: 15px 20px;
-    display: block;
+    padding: 10px 15px;
+    font-weight: bold;
     transition: background-color 0.3s ease, color 0.3s ease;
+    border-radius: 4px;
 }
 
-.main-nav a:hover,
-.main-nav a.active {
-    background-color: #004d40; /* Couleur d'arrière-plan au survol ou si actif */
-    color: #a7ffeb;
+.main-nav li a:hover,
+.main-nav li a.active {
+    background-color: #00796b;
+    color: #e0e0e0;
 }
 
-/* Styles spécifiques du menu déroulant (Dropdown) */
+/* Dropdown Specific Styles */
 .dropdown-content {
-    display: none; /* Caché par défaut */
+    display: none; /* Hidden by default */
     position: absolute;
-    background-color: #004d40; /* Fond du menu déroulant */
-    min-width: 160px;
+    background-color: #004d40; /* Darker background for dropdown */
+    min-width: 180px; /* Minimum width for dropdown */
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1; /* Assure que le menu est au-dessus des autres éléments */
-    border-radius: 0 0 5px 5px;
+    z-index: 1; /* Ensures it appears above other content */
+    border-radius: 4px;
+    left: 50%; /* Center dropdown relative to parent */
+    transform: translateX(-50%); /* Adjust to truly center */
+    padding: 5px 0;
 }
 
 .dropdown-content a {
     color: white;
-    padding: 12px 16px;
+    padding: 10px 15px;
     text-decoration: none;
     display: block;
-    text-align: left;
+    text-align: left; /* Align text within dropdown */
+    transition: background-color 0.3s ease;
+    white-space: nowrap; /* Prevent text wrapping */
 }
 
 .dropdown-content a:hover {
-    background-color: #005f56; /* Couleur de survol pour les éléments du dropdown */
+    background-color: #00796b; /* Highlight on hover */
 }
 
+/* Show the dropdown menu on hover */
 .dropdown:hover .dropdown-content {
-    display: block; /* Affiche le menu déroulant au survol */
+    display: block;
 }
 
-/* Styles de la section du formulaire */
-.form-section {
-    padding: 30px;
+
+main {
+    max-width: 800px; /* Reverted to 800px as action cards won't be a grid */
+    margin: 20px auto;
+    padding: 20px;
     background-color: #ffffff;
     border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.form-section h2 {
-    text-align: center;
-    color: #004d40; /* Couleur de titre principale */
-    font-size: 2.2em;
-    margin-bottom: 10px;
-    font-weight: 700;
-}
-
-.form-description {
-    text-align: center;
-    color: #666;
+/* Reverting to previous action-section styles, adapting to fit the new HTML */
+.main-actions-grid { /* Renamed from action-section for clarity in previous steps, but style remains simple */
+    text-align: center; /* Center the content inside */
     margin-bottom: 30px;
-    font-size: 1.1em;
+    padding: 20px;
+    /* Removed grid specific styles */
 }
 
-form {
-    display: flex;
-    flex-direction: column; /* Les fieldsets s'empilent verticalement */
-    gap: 25px; /* Espacement entre les fieldsets */
+.main-actions-grid h2 {
+    color: #004d40;
+    margin-bottom: 20px; /* Adjusted for better spacing */
+    font-size: 1.8em; /* Adjusted for consistency */
 }
 
+.action-card { /* Basic styling for each action div, no complex card design */
+    margin-bottom: 25px; /* Space between action blocks */
+    padding-bottom: 15px; /* Add some internal padding */
+    border-bottom: 1px dashed #e0e0e0; /* A light separator */
+}
+
+.action-card:last-child {
+    border-bottom: none; /* No separator on the last one */
+    margin-bottom: 0;
+}
+
+.action-card a {
+    display: block; /* Make the whole area clickable */
+    text-decoration: none; /* Remove underline */
+    color: inherit; /* Inherit color */
+    padding: 10px; /* Add padding for clickable area */
+    transition: background-color 0.3s ease;
+}
+
+.action-card a:hover {
+    background-color: #f0f0f0; /* Light hover background */
+    border-radius: 5px;
+}
+
+.action-icon {
+    width: 200px; /* Smaller icon size as they are not in a full card */
+    height: 200px;
+    margin-bottom: 10px;
+    object-fit: contain;
+}
+
+.action-card h3 {
+    color: #004d40;
+    font-size: 1.3em; /* Slightly smaller for this layout */
+    margin-bottom: 5px;
+}
+
+.action-card p {
+    font-size: 0.9em;
+    color: #555;
+    margin-top: 0;
+}
+
+
+/* Existing form styles */
 fieldset {
-    border: 1px solid #e0e0e0; /* Bordure légère pour les groupes de champs */
-    border-radius: 8px;
-    padding: 25px;
-    background-color: #fdfdfd; /* Fond légèrement différent pour les fieldsets */
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03); /* Légère ombre pour les fieldsets */
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 5px;
+    margin-bottom: 20px;
 }
 
 legend {
     font-size: 1.3em;
-    font-weight: 600;
-    color: #00695c; /* Couleur du titre du fieldset */
+    font-weight: bold;
+    color: #004d40;
     padding: 0 10px;
-    margin-left: -5px; /* Ajustement visuel */
-    background-color: #fdfdfd; /* Fait correspondre le fond du fieldset */
-    border-radius: 5px;
 }
 
 .form-group {
-    margin-bottom: 20px; /* Espacement entre chaque groupe label/input */
+    margin-bottom: 15px;
+}
+
+.form-actionns {
     display: flex;
-    flex-direction: column; /* Le label et l'input s'empilent */
+    flex-direction: column; /* Empile les boutons sur mobile */
+    gap: 15px; /* Espace entre les boutons */
+    align-items: center; /* Centre les boutons */
+    margin-top: 30px; /* Espace au-dessus des actions */
 }
 
 .form-group label {
-    font-weight: 500;
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
     color: #555;
-    margin-bottom: 8px; /* Espacement entre le label et l'input */
-    display: block; /* Assure que le label prend sa propre ligne */
-    font-size: 1em;
 }
 
 .form-group input[type="text"],
 .form-group input[type="date"],
 .form-group input[type="number"],
+.form-group input[type="email"],
+.form-group input[type="password"],
 .form-group textarea,
 .form-group select {
-    width: 100%; /* Les champs prennent toute la largeur disponible */
-    padding: 12px 15px; /* Espacement interne des champs */
-    border: 1px solid #ced4da; /* Bordure par défaut */
-    border-radius: 5px; /* Coins légèrement arrondis */
+    width: calc(100% - 22px);
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
     font-size: 1em;
-    color: #333;
-    background-color: #ffffff;
-    box-sizing: border-box; /* Inclut le padding et la bordure dans la largeur/hauteur */
-    transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Transitions douces au focus */
-}
-
-.form-group input[type="text"]::placeholder,
-.form-group textarea::placeholder {
-    color: #a0a0a0; /* Couleur plus claire pour le texte de placeholder */
-}
-
-.form-group input[type="text"]:focus,
-.form-group input[type="date"]:focus,
-.form-group input[type="number"]:focus,
-.form-group textarea:focus,
-.form-group select:focus {
-    border-color: #00796b; /* Bordure verte canard au focus */
-    outline: none; /* Supprime le contour par défaut du navigateur */
-    box-shadow: 0 0 0 3px rgba(0, 121, 107, 0.2); /* Ombre lumineuse au focus */
+    box-sizing: border-box;
 }
 
 .form-group textarea {
-    resize: vertical; /* Permet de redimensionner verticalement uniquement */
-    min-height: 80px; /* Hauteur minimale pour les zones de texte */
+    resize: vertical;
 }
 
-.form-group small {
-    color: #777;
-    font-size: 0.85em;
-    margin-top: 5px;
-    display: block;
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    border-color: #00796b;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 121, 107, 0.3);
 }
 
-/* Actions du formulaire (boutons) */
 .form-actions {
-    display: flex;
-    justify-content: flex-end; /* Aligner les boutons à droite */
-    gap: 15px; /* Espacement entre les boutons */
+    text-align: right;
     margin-top: 30px;
-    padding-top: 20px;
-    border-top: 1px solid #eee; /* Ligne de séparation au-dessus des boutons */
 }
 
-.btn {
+.form-actions button {
+    background-color: #00796b;
+    color: white;
     padding: 12px 25px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 1em;
-    font-weight: 600;
-    text-decoration: none; /* Pour les balises <a> utilisées comme boutons */
-    text-align: center;
-    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    font-size: 1.1em;
+    margin-left: 10px;
+    transition: background-color 0.3s ease;
 }
 
-.btn.primary {
-    background-color: #00796b; /* Bouton principal vert canard */
-    color: #ffffff;
-    box-shadow: 0 2px 6px rgba(0, 121, 107, 0.2);
+.form-actions button[type="reset"] {
+    background-color: #616161;
 }
 
-.btn.primary:hover {
-    background-color: #005f56; /* Couleur plus foncée au survol */
-    transform: translateY(-1px); /* Léger soulèvement au survol */
-    box-shadow: 0 4px 8px rgba(0, 121, 107, 0.3);
+.form-actions button:hover {
+    background-color: #004d40;
 }
 
-.btn.secondary {
-    background-color: #e0e0e0; /* Bouton secondaire gris clair */
-    color: #555;
-    border: 1px solid #ccc;
+.form-actions button[type="reset"]:hover {
+    background-color: #333;
 }
 
-.btn.secondary:hover {
-    background-color: #d0d0d0;
-    color: #333;
-    transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-/* Styles du pied de page */
 footer {
     text-align: center;
     padding: 20px;
@@ -337,38 +347,34 @@ footer {
     background-color: #004d40;
     color: #ffffff;
     font-size: 0.9em;
-    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
 }
 
-/* Ajustements pour la réactivité (écrans plus petits) */
+/* Basic responsiveness for header (adjust as needed) */
 @media (max-width: 768px) {
     .header-top {
-        flex-direction: column; /* Empilement vertical des éléments de l'en-tête */
+        flex-direction: column;
         align-items: flex-start;
         gap: 15px;
-    }
-
-    .site-branding h1 {
-        font-size: 1.5em;
     }
 
     .header-utility {
         width: 100%;
         justify-content: space-between;
-        margin-top: 15px;
     }
 
     .search-bar {
-        width: 100%;
+        width: calc(60% - 10px);
     }
 
     .search-bar input[type="search"] {
-        width: calc(100% - 70px); /* Ajuste la largeur de l'input de recherche */
+        width: 100%;
     }
 
     .main-nav ul {
         flex-direction: column;
-        align-items: center;
+        gap: 0;
+        padding: 0 20px;
     }
 
     .main-nav li {
@@ -376,36 +382,175 @@ footer {
         text-align: center;
     }
 
-    .dropdown-content {
-        position: static; /* Le menu déroulant s'affiche normalement dans le flux */
+    .main-nav li a {
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .main-nav li:last-child a {
+        border-bottom: none;
+    }
+
+    .dropdown .dropbtn {
         width: 100%;
+        box-sizing: border-box;
+    }
+
+    .dropdown-content {
+        position: static;
+        width: 100%;
+        transform: none;
+        box-shadow: none;
         border-radius: 0;
+        padding: 0;
+        background-color: #004d40;
     }
 
-    .form-actions {
-        flex-direction: column; /* Les boutons s'empilent verticalement */
-        align-items: stretch;
+    .dropdown-content a {
+        padding-left: 40px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
 
-    .btn {
-        width: 100%; /* Les boutons prennent toute la largeur */
+    .dropdown-content a:last-child {
+        border-bottom: none;
+    }
+
+    /* Action cards will stack vertically naturally, no grid needed */
+    .main-actions-grid {
+        padding: 0; /* Remove padding from main-actions-grid */
+        display: block; /* Override potential grid if any */
     }
 }
 
 @media (max-width: 480px) {
-    .form-section {
-        padding: 20px;
+    .header-utility {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
     }
 
-    fieldset {
-        padding: 15px;
-    }
-
-    .form-section h2 {
-        font-size: 1.8em;
-    }
-
-    .form-description {
-        font-size: 0.95em;
+    .search-bar {
+        width: 100%;
     }
 }
+/* --- Styles spécifiques au Tableau de Bord (dashboard_financier.html) --- */
+
+.dashboard-description {
+    Text-align : center ;
+    Color : #555 ;
+    Margin-bottom : 40px ;
+    Font-size : 1.1em ;
+}
+
+.dashboard-section {
+    Background-color : #fff ;
+    Padding : 30px ;
+    Border-radius : 8px ;
+    Box-shadow : 0 4px 8px rgba(0, 0, 0, 0.05) ;
+    Margin-top : 30px ;
+    Margin-bottom : 30px ;
+    Max-width : 1200px ; /* Permet à cette section d’être plus large */
+    Margin-left : auto ;
+    Margin-right : auto ;
+}
+
+.dashboard-section h3 {
+    Color : #004d40 ; /* Dark teal */
+    Margin-bottom : 25px ;
+    Border-bottom : 2px solid #dee2e6 ;
+    Padding-bottom : 10px ;
+}
+
+.card-grid {
+    Display : grid ;
+    Grid-template-columns : repeat(auto-fit, minmax(280px, 1fr)) ;
+    Gap : 20px ;
+}
+
+.card {
+    Background-color : #f8f9fa ;
+    Border : 1px solid #dee2e6 ;
+    Border-radius : 8px ;
+    Padding : 20px ;
+    Text-align : center ;
+    Box-shadow : 0 2px 4px rgba(0, 0, 0, 0.03) ;
+    Display : flex ;
+    Flex-direction : column ;
+    Justify-content : space-between ;
+}
+
+.card h4 {
+    Color : #343a40 ;
+    Margin-top : 0 ;
+    Margin-bottom : 10px ;
+}
+
+.card p {
+    Margin-bottom : 15px ;
+    Color : #555 ;
+    Flex-grow : 1 ;
+}
+
+.card .big-number {
+    Font-size : 3em ;
+    Font-weight : bold ;
+    Color : #00796b ; /* Teal pour les nombres clés */
+    Margin-bottom : 10px ;
+}
+
+.quick-actions-grid {
+    Display : grid ;
+    Grid-template-columns : repeat(auto-fit, minmax(250px, 1fr)) ;
+    Gap : 25px ;
+    Justify-content : center ;
+    Padding : 20px 0 ;
+}
+
+.big-btn {
+    Padding : 20px 15px ;
+    Font-size : 1.2em ;
+    Font-weight : bold ;
+    Display : flex ;
+    Flex-direction : column ;
+    Align-items : center ;
+    Gap : 8px ;
+    /* Utilisation des styles de bouton génériques pour les couleurs */
+    Background-color : #00796b ; /* Teal */
+    Color : white ;
+    Border : none ;
+    Border-radius : 5px ;
+    Cursor : pointer ;
+    Box-shadow : 0 2px 4px rgba(0, 0, 0, 0.1) ;
+    Transition : background-color 0.3s ease, transform 0.2s ease ;
+}
+
+.big-btn :hover {
+    Background-color : #004d40 ; /* Darker teal */
+    Transform : translateY(-1px) ;
+}
+
+.big-btn span {
+    Font-size : 2em ;
+    Margin-bottom : 5px ;
+}
+
+Hr {
+    Border : 0 ;
+    Height : 1px ;
+    Background-color : #dee2e6 ;
+    Margin : 40px 0 ;
+}
+
+/* Media Queries spécifiques pour le tableau de bord */
+@media (max-width : 992px) {
+    .dashboard-section {
+        Padding : 20px ;
+        Margin-left : 15px ;
+        Margin-right : 15px ;
+    }
+    .card-grid, .quick-actions-grid {
+        Grid-template-columns : 1fr ;
+    }
+}
+
+

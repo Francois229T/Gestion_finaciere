@@ -140,8 +140,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $activite_id > 0) {
 
             // Après l'ajout réussi, redirigez l'utilisateur vers la page de gestion des participants
             // pour voir la liste mise à jour.
-            //header("Location: gerer_participants.php?activite_id={$activite_id}&msg=" . urlencode($success_message));
-            //exit();
+            header("Location: gerer_participants.php?activite_id={$activite_id}&msg=" . urlencode($success_message));
+            exit();
 
         } catch (PDOException $e) {
             $mysqlClient->rollBack();
@@ -281,7 +281,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $activite_id > 0) {
                             <?php else: ?>
                                 <?php foreach ($participants_list as $participant): ?>
                                     <option value="<?php echo htmlspecialchars($participant['type'] . '_' . $participant['id'] . '_' . $participant['id_compte'] ?? '0'); ?>">
-                                        <?php echo htmlspecialchars($participant['nom_participant']); ?> (<?php echo htmlspecialchars($participant['type']); ?>)
+                                        <?php echo htmlspecialchars($participant['prenom_participant'] . ' ' . $participant['nom_participant']); ?> (<?php echo htmlspecialchars($participant['type']); ?>)
                                     </option>                           
                                 <?php endforeach; ?>
                             <?php endif; ?>
