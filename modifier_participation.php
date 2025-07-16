@@ -6,11 +6,11 @@ $participant_info = [];
 //$compte_id = trim($_POST['']);
 //$type_participant  = trim($_POST['']);
 $titre = trim($_POST['titre_participant'] ?? '');
-$nb_jours_copies = trim($_POST['nb_jours_copies'] ?? '');
-$taux_jounalier_copie = trim($_POST['taux_journalier'] ?? '');
-$forfait_participant = trim($_POST['forfait'] ?? ''); 
-$nb_deplacement = trim($_POST['nb_jours_deplacement'] ?? '');
-$frais_deplacement = trim($_POST['frais_deplacement'] ?? '');
+$nb_jours_copies = $_POST['nb_jours_copies'] ?? 0;
+$taux_jounalier_copie = $_POST['taux_journalier'] ?? 0;
+$forfait_participant = $_POST['forfait'] ?? 0; 
+$nb_deplacement = $_POST['nb_jours_deplacement'] ?? 0;
+$frais_deplacement = $_POST['frais_deplacement'] ?? 0;
 
 if (isset($_GET['action']) && $_GET['action'] === 'update_participation' && isset($_GET['activite_id'])) {
     $activite_id = (int)$_GET['activite_id'] ?? '0';
@@ -58,15 +58,15 @@ if ($activite_id > 0) {
 }
 try {
     $mysqlClient->beginTransaction();
-    $participation_update = "UPDATE participations SET 
-    'titre'                 = :titre,
-    'nb_jours_copies'       = :nb_jours_copies,
-    'taux_journalier_copie' = :taux_jounalier_copie,
-    'forfait_participant'   = :forfait_participant,
-    'nb_deplacement'        = :nb_deplacement,
-    'frais_deplacement'     = :frais_deplacement,
-    'date_enregistrement'   = NOW()
-     WHERE participation.id = $participation_id AND activite_id = $activite_id ";
+    $participation_update = "UPDATE participations SET
+    `titre`                 = :titre,
+    `nb_jours_copies`       = :nb_jours_copies,
+    `taux_journalier_copie` = :taux_journalier_copie,
+    `forfait_participant`   = :forfait_participant,
+    `nb_jours_deplacement`        = :nb_deplacement,
+    `frais_deplacement`     = :frais_deplacement,
+    `date_enregistrement`   = NOW()
+     WHERE id = $participation_id AND activite_id = $activite_id ";
     $participation_to_update = $mysqlClient->prepare($participation_update);
     $participation_to_update->execute([
     ':titre'                   => $titre,
