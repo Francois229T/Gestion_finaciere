@@ -127,17 +127,13 @@ try {
         </div>
         <nav class="main-nav">
             <ul>
-                <li><a href="accueil.html">Accueil Public</a></li>
+                <li><a href="accueil.html">Accueil</a></li>
                 <li class="dropdown">
                     <a href="#" class="dropbtn">Activités</a>
                     <div class="dropdown-content">
                         <a href="creer_activite.php">Créer Activité</a>
                         <a href="gerer_activite.php">Gérer Activités</a> </div>
                 </li>
-                <li><a href="#">Participants</a></li>
-                <li><a href="#">Paiements</a></li>
-                <li><a href="#">Documents</a></li>
-                <li><a href="dashboard_financier.html">Tableau de Bord</a></li>
                 <li><a href="#">Mon Profil</a></li>
                 <li><a href="login.html">Déconnexion</a></li>
             </ul>
@@ -190,7 +186,6 @@ try {
 
                                     <a href="gerer_participants.php?activite_id=<?php echo htmlspecialchars($activite['id']); ?>" class="btn-participants">Participants</a>
 
-                                    <a href="gerer_paiements.php?activite_id=<?php echo htmlspecialchars($activite['id']); ?>" class="btn-paiements">Paiements</a>
 
                                     <a href="afficher_details_activite.php?id=<?php echo htmlspecialchars($activite['id']); ?>" class="btn-details">Détails</a>
 

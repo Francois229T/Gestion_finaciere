@@ -42,7 +42,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'delete_participation' && isse
         header("Location: gerer_participants.php?activite_id={$activite_id}&msg=" . urlencode($success_message));
         exit();
     } catch (PDOException $e) {
-        $pdo->rollBack();
+        $mysqlClient->rollBack();
         $error_message = "Erreur lors de la suppression de la participation : " . htmlspecialchars($e->getMessage());
     }
 }

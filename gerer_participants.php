@@ -169,7 +169,7 @@ if ($activite_id > 0) {
         </div>
         <nav class="main-nav">
             <ul>
-                <li><a href="accueil.html">Accueil Public</a></li>
+                <li><a href="accueil.html">Accueil</a></li>
                 <li class="dropdown">
                     <a href="#" class="dropbtn">Activités</a>
                     <div class="dropdown-content">
@@ -177,10 +177,6 @@ if ($activite_id > 0) {
                         <a href="gerer_activites.php">Gérer Activité</a>
                     </div>
                 </li>
-                <li><a href="#">Participants</a></li>
-                <li><a href="#">Paiements</a></li>
-                <li><a href="#">Documents</a></li>
-                <li><a href="dashboard_financier.html" class="active">Tableau de Bord</a></li>
                 <li><a href="#">Mon Profil</a></li>
                 <li><a href="login.html">Déconnexion</a></li>
             </ul>
@@ -213,8 +209,7 @@ if ($activite_id > 0) {
                         <thead>
                             <tr>
                                 <th>Participant</th>
-                                <th>Type</th>
-                                <th>Titre du participant</th>
+                                <th>Titre</th>
                                 <th>Taux Journalier</th>
                                 <th>Forfait</th>
                                 <th>Frais Déplacement</th>
@@ -227,7 +222,6 @@ if ($activite_id > 0) {
                             <?php foreach ($current_participants as $participant): ?>
                                 <tr>
                                     <td><?php echo htmlspecialchars($participant['nom_participant']); ?></td>
-                                    <td><?php echo htmlspecialchars($participant['type_participant']); ?></td>
                                     <td><?php echo htmlspecialchars($participant['titre']); ?></td>
                                     <td><?php echo htmlspecialchars($participant['taux_journalier_copie'] ?? 'N/A'); ?></td>
                                     <td><?php echo htmlspecialchars($participant['forfait_participant'] ?? 'N/A'); ?></td>
@@ -235,7 +229,7 @@ if ($activite_id > 0) {
                                     <td><?php echo htmlspecialchars($participant['nb_jours_deplacement'] ?? 'N/A'); ?></td>
                                     <td><?php echo htmlspecialchars($participant['nb_jours_copies'] ?? 'N/A'); ?></td>
                                     <td class="action-buttons">
-                                        <a href="modifier_participation.php?id=<?php echo htmlspecialchars($participant['id']); ?>&activite_id=<?php echo $activite_id; ?>" class="btn-modifier">Modifier</a>
+                                        <a href="modifier_participation.php?id=<?php echo htmlspecialchars($participant['id'])?>&activite_id=<?php echo $activite_id?>&action=update_participation" class="btn-modifier">Modifier</a>
                                         <button class="btn-supprimer" onclick="confirmDeleteParticipation(<?php echo htmlspecialchars($participant['id']); ?>, '<?php echo htmlspecialchars($participant['nom_participant']); ?>');">Supprimer</button>
                                     </td>
                                 </tr>

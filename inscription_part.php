@@ -185,14 +185,10 @@ if (isset($_FILES['rib_pdf']['error'][$i]) && $_FILES['rib_pdf']['error'][$i] !=
                 </div>
             </div>
             <div class="header-utility">
-                <div class="search-bar">
-                    <input type="search" placeholder="Rechercher...">
-                    <button type="submit">Rechercher</button>
-                </div>
                 <nav class="utility-nav">
                     <ul>
-                        <li><a href="aide.html">Aide</a></li>
-                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="page_aide.html">Aide</a></li>
+                        <li><a href="page_contact.html">Contact</a></li>
                     </ul>
                 </nav>
             </div>
@@ -200,22 +196,6 @@ if (isset($_FILES['rib_pdf']['error'][$i]) && $_FILES['rib_pdf']['error'][$i] !=
         <nav class="main-nav">
             <ul>
                 <li><a href="accueil.html">Accueil</a></li>
-                <li class="dropdown">
-                    <a href="#" class="dropbtn active">Participants & Activités</a>
-                    <div class="dropdown-content">
-                        <a href="gerer_participant.html">Gérer les participants</a>
-                        <a href="creer_activite.php">Créer une activité</a>
-                        <a href="gerer_activite.html">Gérer les activités</a>
-                    </div>
-                </li>
-                <li class="dropdown">
-                    <a href="#" class="dropbtn">Tableaux de bord</a>
-                    <div class="dropdown-content">
-                        <a href="tableau_de_bord_financier.html">Tableau de bord financier</a>
-                        <a href="#">Autres tableaux de bord</a>
-                    </div>
-                </li>
-                <li><a href="rapports.html">Rapports</a></li>
                 <li><a href="parametres.html">Paramètres</a></li>
                 <li><a href="login.html">Connexion</a></li>
             </ul>
