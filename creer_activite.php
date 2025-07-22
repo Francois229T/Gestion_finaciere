@@ -297,7 +297,6 @@ if (!empty($uploadError)) {
                         <a href="gerer_activites.php">Gérer Activité</a>
                     </div>
                 </li>
-                <li><a href="#">Participants</a></li>
                 <li><a href="#">Mon Profil</a></li>
                 <li><a href="logout.php">Déconnexion</a></li>
             </ul>
@@ -314,7 +313,7 @@ if (!empty($uploadError)) {
 
                     <div class="form-group">
                         <label for="activityName">Nom de l’activité :</label>
-                        <input type="text" id="activityName" name="activityName" placeholder="Ex. Examen BEPC, Formation RH" minlength="5" maxlength="100" required>
+                        <input type="text" id="activityName" name="activityName" placeholder="Ex. Examen BEPC, Formation RH" minlength="5" maxlength="100" required value="<?= htmlspecialchars($nom_activite ?? '')?>>
                     </div>
 
                     <div class="form-group">

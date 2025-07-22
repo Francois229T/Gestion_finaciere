@@ -60,14 +60,14 @@ try {
     <style>
         /* Styles CSS additionnels pour le tableau et les boutons */
         table {
-            width: 95%; /* Légèrement plus large pour les boutons */
+            width: 100%; /* Légèrement plus large pour les boutons */
             border-collapse: collapse;
             margin: 20px auto;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
         th, td {
             border: 1px solid #ddd;
-            padding: 10px;
+            padding: 8px;
             text-align: left;
         }
         th {
@@ -110,12 +110,22 @@ try {
             margin: 30px 0;
             font-style: italic;
         }
+        
+            /* Conteneur Flexbox pour les boutons à l'intérieur de la cellule d'action */
         .action-buttons {
-            display: flex; /* Permet aux boutons d'être sur une ligne */
+            display: flex;
+            flex-direction: column; /* Aligne les boutons verticalement */
             gap: 5px; /* Espace entre les boutons */
-            flex-wrap: wrap; /* Pour que les boutons passent à la ligne si pas assez de place */
+            width: 100%; /* S'assure que le conteneur prend toute la largeur de sa cellule parent */
+            box-sizing: border-box; /* Inclut padding et border dans la largeur */
+            /* Permet aux boutons de rester centrés si la cellule est plus large que le contenu */
+            align-items: center; /* Centre les éléments enfants (les boutons) horizontalement */
         }
-        .action-buttons button, .action-buttons a {
+
+        /* Styles pour tous les boutons et liens qui agissent comme des boutons dans la colonne Actions */
+        .action-buttons button,
+        .action-buttons a {
+            /* Styles existants pour l'apparence */
             padding: 8px 12px;
             border: none;
             border-radius: 4px;
@@ -124,32 +134,36 @@ try {
             color: white;
             font-size: 0.9em;
             text-align: center;
-            display: inline-block; /* Assure que padding et margin fonctionnent */
+            
+            /* Propriétés pour la taille uniforme */
+            display: block; /* Force le bouton/lien à prendre toute la largeur disponible du parent .action-buttons */
+            width: 100%; /* C'est la clé : chaque bouton prend 100% de la largeur de son conteneur (.action-buttons) */
+            box-sizing: border-box; /* S'assure que padding et border sont inclus dans la largeur */
+
+            /* Gestion du texte long */
+            white-space: nowrap; /* Empêche le texte de passer à la ligne */
+            overflow: hidden; /* Cache le texte qui dépasse */
+            text-overflow: ellipsis; /* Affiche "..." si le texte est coupé */
+            max-width: 150px; /* Optionnel: Limite la largeur maximale d'un bouton pour éviter qu'un bouton trop long n'étire trop la colonne */
         }
+
+        /* Styles de couleur spécifiques */
         .btn-modifier { background-color: #007bff; } /* Bleu */
         .btn-participants { background-color: #28a745; } /* Vert */
-        .btn-paiements { background-color: #ffc107; color: #333; } /* Jaune */
-        .btn-supprimer { background-color: #dc3545; } /* Rouge */
         .btn-details { background-color: #6c757d; } /* Gris */
-
-        /* Style pour le bouton "Générer Documents" qui est maintenant un lien */
         .btn-generer-documents-link {
             background-color: #6f42c1; /* Violet */
             color: white;
-            padding: 8px 12px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            text-decoration: none;
-            font-size: 0.9em;
-            text-align: center;
-            display: inline-block;
         }
+        .btn-supprimer { background-color: #dc3545; } /* Rouge */
 
-        .action-buttons button:hover, .action-buttons a:hover,
-        .btn-generer-documents-link:hover { /* Ajout de l'effet hover pour le nouveau lien */
+        /* Effet de survol */
+        .action-buttons button:hover,
+        .action-buttons a:hover {
             opacity: 0.9;
         }
+
+
 
         /* Styles pour la pagination */
         .pagination {
@@ -217,7 +231,7 @@ try {
                     <a href="#" class="dropbtn">Activités</a>
                     <div class="dropdown-content">
                         <a href="creer_activite.php">Créer Activité</a>
-                        <a href="gerer_activite.php">Gérer Activités</a> </div>
+                        <a href="gerer_activites.php">Gérer Activités</a> </div>
                 </li>
                 <li><a href="#">Mon Profil</a></li>
                 <li><a href="logout.php">Déconnexion</a></li>
@@ -247,7 +261,7 @@ try {
                 <table>
                     <thead>
                         <tr>
-                            <th>ID</th>
+                            <th>N0:</th>
                             <th>Nom</th>
                             <th>Responsable</th>
                             <th>Organisateur</th>
@@ -258,9 +272,12 @@ try {
                         </tr>
                     </thead>
                     <tbody>
+                        <?php $compt = 0; ?>
+
                         <?php foreach ($activites as $activite): ?>
+                            <?php $compt += 1; ?>
                             <tr>
-                                <td><?php echo htmlspecialchars($activite['id']); ?></td>
+                                <td><?php echo $compt; ?></td>
                                 <td><?php echo htmlspecialchars($activite['nom']); ?></td>
                                 <td><?php echo htmlspecialchars($activite['responsable_titre']); ?></td>
                                 <td><?php echo htmlspecialchars($activite['organisateur_titre']); ?></td>
@@ -270,7 +287,7 @@ try {
                                     Au <?php echo htmlspecialchars($activite['periode_fin']); ?>
                                 </td>
                                 <td><?php echo htmlspecialchars($activite['centre']); ?></td>
-                                <td class="action-buttons">
+                                <td class="action-cell"> <div class="action-buttons"> </div>
                                     <a href="modifier_activite.php?id=<?php echo htmlspecialchars($activite['id']); ?>" class="btn-modifier">Modifier</a>
 
                                     <a href="gerer_participants.php?activite_id=<?php echo htmlspecialchars($activite['id']); ?>" class="btn-participants">Participants</a>
