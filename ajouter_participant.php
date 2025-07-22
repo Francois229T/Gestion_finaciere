@@ -4,6 +4,8 @@ require_once 'db.php';
 
 $activite_id = isset($_GET['activite_id']) ? (int)$_GET['activite_id'] : 0;
 $activity_name = '';
+$acteurs_list = [];
+$banques_list = [];
 $participants_list = [];
 $error_message = '';
 $success_message = '';
@@ -69,6 +71,8 @@ if ($activite_id > 0) { // On ne récupère les participants que si l'activité 
 }
 
 
+
+
 // --- 3. Gérer la soumission du formulaire d'ajout de participant à l'activité ---
 if ($_SERVER["REQUEST_METHOD"] == "POST" && $activite_id > 0) {
     // Récupération et validation des données du formulaire
@@ -79,7 +83,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $activite_id > 0) {
     $nb_jours_deplacement   = trim($_POST['nb_jours_deplacement'] ?? '');
     $nb_jours_copies        = trim($_POST['nb_jours_copies'] ?? '');
     $titre_participant      = trim($_POST['titre_participant'] ?? '');
-    
+    $current_bank           = trim($_POST['current_bank'] ?? '');
+
     $participant_parts = explode('_', $participant_full_id);
     $type_participant = $participant_parts[0] ?? '';
 
@@ -90,62 +95,128 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $activite_id > 0) {
     if ($participant_id === 0 || empty($type_participant)) {
         $error_message = "Veuillez sélectionner un participant valide.";
     } else {
-        
         try {
-            $mysqlClient->beginTransaction();
+        // Récupérer les personnes physiques
+        $stmt_data_for_acteurs = $mysqlClient->prepare("
+                SELECT
+                    p.id AS participant_main_id,
+                    CASE
+                        WHEN p.type = 'individu' THEN pp.nom
+                        WHEN p.type = 'personne_morale' THEN pm.denomination
+                        ELSE NULL
+                    END AS nom_participant,
+                    CASE
+                        WHEN p.type = 'individu' THEN pp.prenom
+                        ELSE NULL
+                    END AS prenom_participant,
+                    cb.banque AS compte_bancaire_choisi,
+                    cb.rib_pdf_path AS rib_compte -- Assurez-vous que c'est le champ du RIB
+                FROM
+                    participants p
+                LEFT JOIN
+                    personnes_physiques pp ON p.id = pp.participant_id
+                LEFT JOIN
+                    personnes_morales pm ON p.id = pm.participant_id
+                JOIN
+                    comptes_bancaires cb ON p.id = cb.participant_id
+                WHERE
+                    p.id = :participant_id AND cb.banque = :current_bank_name AND cb.id_compte = :compte_id
+            ");
 
-            $sql = "INSERT INTO participations (
-                        activite_id,
-                        participant_id,
-                        compte_id,
-                        titre,
-                        type_participant,
-                        taux_journalier_copie,
-                        forfait_participant,
-                        frais_deplacement,
-                        nb_jours_deplacement,
-                        nb_jours_copies,
-                        date_enregistrement
-                    ) VALUES (
-                        :activite_id,
-                        :participant_id,
-                        :compte_id,
-                        :titre,
-                        :type_participant,
-                        :taux_journalier,
-                        :forfait,
-                        :frais_deplacement,
-                        :nb_jours_deplacement,
-                        :nb_jours_copies,
-                        NOW()
-                    )";
-
-            $stmt = $mysqlClient->prepare($sql);
-
-            $stmt->execute([
-                ':activite_id'          => $activite_id,
-                ':participant_id'       => $participant_id,
-                ':type_participant'     => $type_participant,
-                ':compte_id'            => !empty($compte_id) ? (int) $compte_id : NULL,
-                ':titre'                => $titre_participant,
-                ':taux_journalier'      => !empty($taux_journalier) ? (float)$taux_journalier : NULL,
-                ':forfait'              => !empty($forfait) ? (float)$forfait : NULL,
-                ':frais_deplacement'    => !empty($frais_deplacement) ? (float)$frais_deplacement : NULL,
-                ':nb_jours_deplacement' => !empty($nb_jours_deplacement) ? (int)$nb_jours_deplacement : NULL,
-                ':nb_jours_copies'      => !empty($nb_jours_copies) ? (int)$nb_jours_copies : NULL
+            $stmt_data_for_acteurs->execute([
+                ':participant_id'     => $participant_id,
+                ':current_bank_name'  => $current_bank,
+                ':compte_id'          => $compte_id // Utilisez le compte_id pour être plus spécifique
             ]);
 
-            $mysqlClient->commit();
-            $success_message = "Participant ajouté à l'activité avec succès !";
+            $acteur_data = $stmt_data_for_acteurs->fetch(PDO::FETCH_ASSOC);
 
-            // Après l'ajout réussi, redirigez l'utilisateur vers la page de gestion des participants
-            // pour voir la liste mise à jour.
-            header("Location: gerer_participants.php?activite_id={$activite_id}&msg=" . urlencode($success_message));
-            exit();
+            if (!$acteur_data) {
+                $error_message .= "Impossible de trouver les données complètes du participant ou du compte bancaire sélectionné.";
+            } else {
+                // --- Étape 2 : Commencer la transaction pour l'insertion dans 'participations' et 'acteurs'
+                $mysqlClient->beginTransaction();
+
+                // Insertion dans la table 'participations' (Votre code existant pour les participations)
+                $sql_participations = "INSERT INTO participations (
+                                    activite_id,
+                                    participant_id,
+                                    compte_id,
+                                    titre,
+                                    type_participant,
+                                    taux_journalier_copie,
+                                    forfait_participant,
+                                    frais_deplacement,
+                                    nb_jours_deplacement,
+                                    nb_jours_copies,
+                                    date_enregistrement
+                                ) VALUES (
+                                    :activite_id,
+                                    :participant_id,
+                                    :compte_id,
+                                    :titre,
+                                    :type_participant,
+                                    :taux_journalier,
+                                    :forfait,
+                                    :frais_deplacement,
+                                    :nb_jours_deplacement,
+                                    :nb_jours_copies,
+                                    NOW()
+                                )";
+
+                $stmt_participations = $mysqlClient->prepare($sql_participations);
+                $stmt_participations->execute([
+                    ':activite_id'          => $activite_id,
+                    ':participant_id'       => $participant_id,
+                    ':type_participant'     => $type_participant,
+                    ':compte_id'            => !empty($compte_id) ? (int) $compte_id : NULL,
+                    ':titre'                => $titre_participant,
+                    ':taux_journalier'      => !empty($taux_journalier) ? (float)$taux_journalier : NULL,
+                    ':forfait'              => !empty($forfait) ? (float)$forfait : NULL,
+                    ':frais_deplacement'    => !empty($frais_deplacement) ? (float)$frais_deplacement : NULL,
+                    ':nb_jours_deplacement' => !empty($nb_jours_deplacement) ? (int)$nb_jours_deplacement : NULL,
+                    ':nb_jours_copies'      => !empty($nb_jours_copies) ? (int)$nb_jours_copies : NULL
+                ]);
+
+                // --- Étape 3 : Insertion dans la table 'acteurs'
+                // Utilisez les données récupérées dans $acteur_data
+                $sql_acteurs = "INSERT INTO acteurs (
+                                nom,
+                                prenom,
+                                compte_bancaire_choisi,
+                                rib_compte,
+                                titre,
+                                id_activite)
+                                VALUES (
+                                :nom,
+                                :prenom,
+                                :compte_bancaire_choisi,
+                                :rib_compte,
+                                :titre,
+                                :id_activite)";
+
+                $stmt_acteurs_insert = $mysqlClient->prepare($sql_acteurs); // Utilisez $mysqlClient ici !
+
+                $stmt_acteurs_insert->execute([
+                    ':nom'                     => $acteur_data['nom_participant'],
+                    ':prenom'                  => $acteur_data['prenom_participant'],
+                    ':compte_bancaire_choisi'  => $acteur_data['compte_bancaire_choisi'], // C'est le nom de la banque
+                    ':rib_compte'              => $acteur_data['rib_compte'],
+                    ':titre'                   => $titre_participant, // Titre vient du formulaire HTML
+                    ':id_activite'             => $activite_id
+                ]);
+
+                $mysqlClient->commit();
+                $success_message = "Participant ajouté à l'activité et enregistré dans la table acteurs avec succès !";
+
+                // Redirection après succès
+                header("Location: gerer_participants.php?activite_id={$activite_id}&msg=" . urlencode($success_message));
+                exit();
+            }
 
         } catch (PDOException $e) {
             $mysqlClient->rollBack();
-            $error_message = "Erreur lors de l'ajout du participant : " . htmlspecialchars($e->getMessage());
+            $error_message = "Erreur lors de l'ajout (transaction) : " . htmlspecialchars($e->getMessage());
         }
     }
 }
@@ -313,6 +384,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $activite_id > 0) {
                         <input type="number" id="nb_jours_copies" name="nb_jours_copies">
                     </div>
 
+                   <div class="form-group">
+                        <label for="current_bank"> Choisissez le compte bancaire à utiliser :</label>
+                        <select id="current_bank" name="current_bank" required>
+                            <option value="">-- Choisir une banque --</option>
+                            <?php if (!empty($error_message)): ?>
+                                <option value="" disabled class="error-option"><?php echo $error_message; ?></option>
+                            <?php elseif (empty($banques_list)): ?>
+                                <option value="" disabled>Vous n'avez aucune banque enregistrée. Veuillez fournir vos comptes bancaires d'abord.</option>
+                            <?php else: ?>
+                                <?php foreach ($banques_list as $banque_name): ?>
+                                    <option value="<?php echo htmlspecialchars($banque_name); ?>">
+                                        <?php echo htmlspecialchars($banque_name); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </select>
+                    </div>
+
                     <div class="form-group">
                         <button type="submit">Ajouter le Participant</button>
                     </div>
@@ -322,6 +411,80 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $activite_id > 0) {
     </main>
 
     <footer>
-        </footer>
+    </footer>
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const participantSelect = document.getElementById('participant_id');
+            const bankSelect = document.getElementById('current_bank');
+
+            // Fonction pour charger les banques via AJAX
+            function loadBanksForParticipant(participantId) {
+                // Efface les options existantes et ajoute une option de chargement
+                bankSelect.innerHTML = '<option value="">-- Chargement des banques --</option>';
+
+                if (!participantId || participantId === '0') {
+                    // Si pas de participant sélectionné, réinitialise avec le message par défaut
+                    bankSelect.innerHTML = '<option value="">-- Choisir une banque --</option><option value="" disabled>Veuillez sélectionner un participant d\'abord.</option>';
+                    return;
+                }
+
+                // Faites une requête AJAX vers le nouveau script PHP
+                // Assurez-vous que le chemin est correct si get_banks_for_participant.php n'est pas dans le même dossier
+                fetch('get_banks_for_participant.php?participant_id=' + participantId)
+                    .then(response => {
+                        if (!response.ok) {
+                            // Gérer les erreurs de réseau/serveur (ex: 404, 500)
+                            throw new Error('Erreur réseau ou serveur: ' + response.statusText);
+                        }
+                        return response.json(); // Parsez la réponse JSON
+                    })
+                    .then(data => {
+                        // Réinitialise la liste déroulante avant d'ajouter de nouvelles options
+                        bankSelect.innerHTML = '<option value="">-- Choisir une banque --</option>'; 
+                        if (data.length > 0) {
+                            data.forEach(bankName => {
+                                const option = document.createElement('option');
+                                option.value = bankName; // La valeur de l'option est le nom de la banque
+                                option.textContent = bankName; // Le texte affiché est le nom de la banque
+                                bankSelect.appendChild(option);
+                            });
+                        } else {
+                            // Si aucune banque n'est trouvée pour ce participant
+                            bankSelect.innerHTML += '<option value="" disabled>Aucune banque enregistrée pour ce participant.</option>';
+                        }
+                    })
+                    .catch(error => {
+                        // Gérer les erreurs JavaScript (ex: problème de parsing JSON, erreur réseau)
+                        console.error('Erreur lors du chargement des banques:', error);
+                        bankSelect.innerHTML = '<option value="">-- Choisir une banque --</option><option value="" disabled>Erreur de chargement des banques.</option>';
+                    });
+            }
+
+            // Écouteur d'événement sur le changement de participant
+            // Lorsque l'utilisateur sélectionne un participant dans la première liste
+            participantSelect.addEventListener('change', function() {
+                const selectedValue = this.value; // Ceci contient 'type_ID_idcompte' (ex: 'individu_1_123')
+                const parts = selectedValue.split('_');
+                const participantId = parts[1]; // Récupère l'ID réel du participant (le 2ème élément après split)
+
+                loadBanksForParticipant(participantId); // Appelle la fonction pour charger les banques
+            });
+
+            // IMPORTANT : Charger les banques au chargement initial de la page si un participant est déjà sélectionné
+            // Cela arrive si la page est rechargée avec un participant déjà choisi (par ex. après une erreur de validation)
+            if (participantSelect.value && participantSelect.value !== '') {
+                const initialSelectedValue = participantSelect.value;
+                const initialParts = initialSelectedValue.split('_');
+                const initialParticipantId = initialParts[1];
+                if (initialParticipantId && initialParticipantId !== '0') {
+                    loadBanksForParticipant(initialParticipantId);
+                }
+            } else {
+                // Assurez-vous que le message par défaut est affiché si rien n'est sélectionné au début
+                bankSelect.innerHTML = '<option value="">-- Choisir une banque --</option><option value="" disabled>Veuillez sélectionner un participant d\'abord.</option>';
+            }
+
+        });
+    </script>
 </body>
 </html>
