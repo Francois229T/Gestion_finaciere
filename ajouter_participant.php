@@ -252,7 +252,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $activite_id > 0) {
                 <li><a href="#">Documents</a></li>
                 <li><a href="dashboard_financier.html" class="active">Tableau de Bord</a></li>
                 <li><a href="#">Mon Profil</a></li>
-                <li><a href="login.html">Déconnexion</a></li>
+                <li><a href="logout.php">Déconnexion</a></li>
             </ul>
         </nav>
     </header>

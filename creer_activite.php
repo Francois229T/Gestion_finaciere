@@ -299,7 +299,7 @@ if (!empty($uploadError)) {
                 </li>
                 <li><a href="#">Participants</a></li>
                 <li><a href="#">Mon Profil</a></li>
-                <li><a href="login.html">Déconnexion</a></li>
+                <li><a href="logout.php">Déconnexion</a></li>
             </ul>
         </nav>
     </header>

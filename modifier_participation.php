@@ -1,98 +1,156 @@
 <?php
-require_once 'db.php';
+require_once 'db.php'; // Assurez-vous que ce fichier gère correctement la connexion PDO $mysqlClient
 
-$error_message = [];
-$participant_info = [];
-//$compte_id = trim($_POST['']);
-//$type_participant  = trim($_POST['']);
-$titre = trim($_POST['titre_participant'] ?? '');
-$nb_jours_copies = trim($_POST['nb_jours_copies'] ?? '');
-$taux_jounalier_copie = trim($_POST['taux_journalier'] ?? '');
-$forfait_participant = trim($_POST['forfait'] ?? ''); 
-$nb_deplacement = trim($_POST['nb_jours_deplacement'] ?? '');
-$frais_deplacement = trim($_POST['frais_deplacement'] ?? '');
+$error_message = '';
+$success_message = '';
+$activity_name = 'Chargement...'; // Valeur par défaut
+$current_participation_data = []; // Pour stocker les données actuelles du participant
 
-if (isset($_GET['action']) && $_GET['action'] === 'update_participation' && isset($_GET['activite_id'])) {
-    $activite_id = (int)$_GET['activite_id'] ?? '0';
-}
+// --- 1. Récupération des IDs et de l'activité ---
 $activite_id = isset($_GET['activite_id']) ? (int)$_GET['activite_id'] : 0;
-if ($activite_id > 0) {
+$participation_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+
+// Vérifier si les IDs nécessaires sont présents
+if ($activite_id === 0 || $participation_id === 0) {
+    $error_message = "ID d'activité ou de participation manquant. Impossible de modifier.";
+} else {
     try {
+        // Récupérer le nom de l'activité
         $stmt_activity = $mysqlClient->prepare("SELECT nom FROM activites WHERE id = :id");
         $stmt_activity->execute([':id' => $activite_id]);
         $activity_data = $stmt_activity->fetch(PDO::FETCH_ASSOC);
+
         if ($activity_data) {
             $activity_name = htmlspecialchars($activity_data['nom']);
         } else {
-            $error_message = "Activité non trouvée.";
-            $activite_id = 0; // Réinitialiser pour éviter d'autres opérations incorrectes
+            $error_message .= " Activité non trouvée.";
         }
+
+        // Récupérer les informations actuelles de la participation pour pré-remplir le formulaire
+        $query_participation_data = $mysqlClient->prepare("
+            SELECT
+                p.titre,
+                p.nb_jours_copies,
+                p.taux_journalier_copie,
+                p.forfait_participant,
+                p.nb_jours_deplacement,
+                p.frais_deplacement,
+                CASE
+                    WHEN p.type_participant = 'individu' THEN pp.nom
+                    WHEN p.type_participant = 'personne_morale' THEN pm.denomination
+                    ELSE NULL
+                END AS nom_participant,
+                CASE
+                    WHEN p.type_participant = 'individu' THEN pp.prenom
+                    ELSE NULL
+                END AS prenom_participant
+            FROM
+                participations p
+            LEFT JOIN
+                personnes_physiques pp ON p.participant_id = pp.participant_id AND p.type_participant = 'individu'
+            LEFT JOIN
+                personnes_morales pm ON p.participant_id = pm.participant_id AND p.type_participant = 'personne_morale'
+            WHERE
+                p.id = :participation_id AND p.activite_id = :activite_id
+        ");
+        $query_participation_data->execute([
+            ':participation_id' => $participation_id,
+            ':activite_id' => $activite_id
+        ]);
+        $current_participation_data = $query_participation_data->fetch(PDO::FETCH_ASSOC);
+
+        if (!$current_participation_data) {
+            $error_message .= " Participation non trouvée pour cette activité.";
+            // Si la participation n'est pas trouvée, rediriger ou arrêter le script
+            // header("Location: gerer_activites.php?msg=" . urlencode("Participation introuvable."));
+            // exit();
+        }
+
     } catch (PDOException $e) {
-        $error_message = "Erreur lors de la récupération de l'activité : " . htmlspecialchars($e->getMessage());
+        $error_message .= " Erreur lors de la récupération des données : " . htmlspecialchars($e->getMessage());
     }
-} if (isset($_GET['action']) || $_GET['action'] === 'update_participation' || isset($_GET['id'])) {
-    $participation_id = (int)$_GET['id'];
- try {
-    $query = $mysqlClient->prepare("
-    SELECT ptions.id, 
-	CASE
-        WHEN ptions.type_participant = 'individu' THEN pp.nom
-        WHEN ptions.type_participant = 'personne_morale' THEN pm.denomination
-        ELSE NULL
-	END AS nom_participant,
-    CASE
-        WHEN ptions.type_participant = 'individu' THEN pp.prenom
-        ELSE NULL
-    END AS prenom_participant
-    FROM participations ptions
-    LEFT JOIN personnes_physiques pp on ptions.participant_id = pp.participant_id
-    LEFT JOIN personnes_morales pm on ptions.participant_id = pm.participant_id
-    WHERE ptions.id = :participation_id");
-    $query->execute([':participation_id' => $participation_id]);
-    while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
-            $participant_info[] = $row;
+}
+
+
+// --- 2. Traitement de la soumission du formulaire (requête POST) ---
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $activite_id > 0 && $participation_id > 0) {
+    // Récupérer les données du formulaire
+    $titre = trim($_POST['titre_participant'] ?? '');
+    $nb_jours_copies = (int)($_POST['nb_jours_copies'] ?? 0);
+    $taux_jounalier_copie = (float)($_POST['taux_journalier'] ?? 0);
+    $forfait_participant = (float)($_POST['forfait'] ?? 0); 
+    $nb_deplacement = (int)($_POST['nb_jours_deplacement'] ?? 0);
+    $frais_deplacement = (float)($_POST['frais_deplacement'] ?? 0);
+
+    // Valider les données (exemple simple, à étoffer)
+    if (empty($titre)) {
+        $error_message = "Le titre du participant est requis.";
+    } elseif ($nb_jours_copies < 0 || $taux_jounalier_copie < 0 || $forfait_participant < 0 || $nb_deplacement < 0 || $frais_deplacement < 0) {
+        $error_message = "Les valeurs numériques ne peuvent pas être négatives.";
+    } else {
+        try {
+            $mysqlClient->beginTransaction();
+
+            $participation_update = "UPDATE participations SET
+                `titre`                 = :titre,
+                `nb_jours_copies`       = :nb_jours_copies,
+                `taux_journalier_copie` = :taux_journalier_copie,
+                `forfait_participant`   = :forfait_participant,
+                `nb_jours_deplacement`  = :nb_deplacement,
+                `frais_deplacement`     = :frais_deplacement,
+                `date_enregistrement`   = NOW()
+            WHERE id = :participation_id AND activite_id = :activite_id"; // Utilisez des placeholders pour tous les critères WHERE
+
+            $participation_to_update = $mysqlClient->prepare($participation_update);
+            $participation_to_update->execute([
+                ':titre'                 => $titre,
+                ':nb_jours_copies'       => $nb_jours_copies,
+                ':taux_journalier_copie' => $taux_jounalier_copie,
+                ':forfait_participant'   => $forfait_participant, 
+                ':nb_deplacement'        => $nb_deplacement,
+                ':frais_deplacement'     => $frais_deplacement,
+                ':participation_id'      => $participation_id, // Important : passer l'ID ici
+                ':activite_id'           => $activite_id       // Important : passer l'ID ici
+            ]);
+
+            $mysqlClient->commit();
+            $success_message = "La participation a été modifiée avec succès.";
+            
+            // Recharger les données pour que le formulaire affiche les nouvelles valeurs
+            // ou rediriger vers la page de gestion avec le message de succès.
+            header("Location: gerer_participants.php?activite_id={$activite_id}&msg=" . urlencode($success_message));
+            exit();
+
+        } catch (PDOException $e) {
+            $mysqlClient->rollBack();
+            $error_message = "Erreur lors de la modification de la participation : " . htmlspecialchars($e->getMessage());
         }
- } catch (PDOException $e) {
-    $error_message .= " Erreur lors de la récupération des informations de participation du participant : " . htmlspecialchars($e->getMessage());
     }
 }
-try {
-    $mysqlClient->beginTransaction();
-    $participation_update = "UPDATE participations SET 
-    'titre'                 = :titre,
-    'nb_jours_copies'       = :nb_jours_copies,
-    'taux_journalier_copie' = :taux_jounalier_copie,
-    'forfait_participant'   = :forfait_participant,
-    'nb_deplacement'        = :nb_deplacement,
-    'frais_deplacement'     = :frais_deplacement,
-    'date_enregistrement'   = NOW()
-     WHERE participation.id = $participation_id AND activite_id = $activite_id ";
-    $participation_to_update = $mysqlClient->prepare($participation_update);
-    $participation_to_update->execute([
-    ':titre'                   => $titre,
-    ':nb_jours_copies'         =>  $nb_jours_copies,
-    ':taux_journalier_copie'   =>  $taux_jounalier_copie,
-    ':forfait_participant'     => $forfait_participant, 
-    ':nb_deplacement'          =>   $nb_deplacement,
-    ':frais_deplacement'       =>   $frais_deplacement
-    ]);
-    $mysqlClient->commit();
-    $success_message = "La participation a été modifiée avec succès.";
-    // Rediriger pour éviter la re-soumission du DELETE
-    header("Location: gerer_participants.php?activite_id={$activite_id}&msg=" . urlencode($success_message));
-    exit();
-} catch (PDOException $e) {
-    $mysqlClient->rollBack();
-        $error_message = "Erreur lors de la modification de la participation : " . htmlspecialchars($e->getMessage());
+
+// --- Si une erreur grave empêche l'affichage du formulaire, on peut s'arrêter ici ---
+if (!empty($error_message) && empty($current_participation_data)) {
+    // Dans ce cas, nous affichons l'erreur et n'affichons pas le formulaire
 }
-?> 
+?>
 
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modifier la participation de <?php echo htmlspecialchars($participants_info['prenom_participant'] . ' ' . $participants_info['nom_participant'])  ?> à l'Activité : <?php echo $activity_name; ?></title>
+    <title>Modifier la participation de 
+        <?php 
+        if (isset($current_participation_data['prenom_participant']) && isset($current_participation_data['nom_participant'])) {
+            echo htmlspecialchars($current_participation_data['prenom_participant'] . ' ' . $current_participation_data['nom_participant']);
+        } else if (isset($current_participation_data['nom_participant'])) {
+             echo htmlspecialchars($current_participation_data['nom_participant']);
+        } else {
+            echo "Participant inconnu";
+        }
+        ?> 
+        à l'Activité : <?php echo $activity_name; ?>
+    </title>
     <link rel="stylesheet" href="class1.css">
     <style>
         /* (Conservez les styles CSS pour les formulaires, messages, etc. du précédent exemple) */
@@ -150,7 +208,7 @@ try {
     </style>
 </head>
 <body>
-<header>
+    <header>
         <div class="header-top">
             <div class="header-content">
                 <img src="tresorpubbenin.png" alt="Logo Trésor Public Bénin" id="logo">
@@ -191,9 +249,18 @@ try {
     </header>
     <main>
         <section class="add-participant-form-section">
-             <?php foreach ($participant_info as $participant) : ?> 
-            <h2>Modifier la participation de <?php echo htmlspecialchars($participant['prenom_participant'] . ' ' . $participant['nom_participant'])  ?> à l'Activité : <?php echo $activity_name; ?>
-             <?php endforeach; ?></title></h2>
+            <h2>Modifier la participation de 
+                <?php 
+                if (isset($current_participation_data['prenom_participant']) && isset($current_participation_data['nom_participant'])) {
+                    echo htmlspecialchars($current_participation_data['prenom_participant'] . ' ' . $current_participation_data['nom_participant']);
+                } else if (isset($current_participation_data['nom_participant'])) {
+                     echo htmlspecialchars($current_participation_data['nom_participant']);
+                } else {
+                    echo "Participant inconnu";
+                }
+                ?> 
+                à l'Activité : <?php echo $activity_name; ?>
+            </h2>
 
             <?php if (!empty($error_message)): ?>
                 <p class="message-erreur"><?php echo $error_message; ?></p>
@@ -202,38 +269,37 @@ try {
                 <p class="message-succes"><?php echo $success_message; ?></p>
             <?php endif; ?>
 
-            <?php if ($activite_id === 0): ?>
-                <p class="message-erreur">Une erreur est survenue. L'activité n'a pas été spécifiée.</p>
-                <p class="message-erreur">Veuillez retourner à la <a href="gerer_activites.php">liste des activités</a>.</p>
+            <?php if ($activite_id === 0 || $participation_id === 0 || empty($current_participation_data)): ?>
+                <p class="message-erreur">Une erreur est survenue ou la participation n'existe pas. Veuillez retourner à la <a href="gerer_activites.php">liste des activités</a>.</p>
             <?php else: ?>
-                <form action="ajouter_participant.php?activite_id=<?php echo $activite_id; ?>" method="post">
+                <form action="modifier_participation.php?activite_id=<?php echo $activite_id; ?>&id=<?php echo $participation_id; ?>" method="post">
                     <div class="form-group">
-                        <label for="titre_participant"> Titre du participant :</label>
-                        <input type="text"  id="titre_participant" name="titre_participant">
+                        <label for="titre_participant">Titre du participant :</label>
+                        <input type="text" id="titre_participant" name="titre_participant" value="<?php echo htmlspecialchars($current_participation_data['titre'] ?? ''); ?>">
                     </div>
                     <div class="form-group">
                         <label for="taux_journalier">Taux Journalier Alloué :</label>
-                        <input type="number"  id="taux_journalier" name="taux_journalier">
+                        <input type="number" id="taux_journalier" name="taux_journalier" value="<?php echo htmlspecialchars($current_participation_data['taux_journalier_copie'] ?? 0); ?>">
                     </div>
                     <div class="form-group">
                         <label for="forfait">Forfait Alloué :</label>
-                        <input type="number"  id="forfait" name="forfait">
+                        <input type="number" id="forfait" name="forfait" value="<?php echo htmlspecialchars($current_participation_data['forfait_participant'] ?? 0); ?>">
                     </div>
                     <div class="form-group">
                         <label for="frais_deplacement">Frais de Déplacement Alloués :</label>
-                        <input type="number"  id="frais_deplacement" name="frais_deplacement">
+                        <input type="number" id="frais_deplacement" name="frais_deplacement" value="<?php echo htmlspecialchars($current_participation_data['frais_deplacement'] ?? 0); ?>">
                     </div>
                     <div class="form-group">
                         <label for="nb_jours_deplacement">Nombre de Jours de Déplacement :</label>
-                        <input type="number" id="nb_jours_deplacement" name="nb_jours_deplacement">
+                        <input type="number" id="nb_jours_deplacement" name="nb_jours_deplacement" value="<?php echo htmlspecialchars($current_participation_data['nb_jours_deplacement'] ?? 0); ?>">
                     </div>
                     <div class="form-group">
                         <label for="nb_jours_copies">Nombre de Jours/Copies :</label>
-                        <input type="number" id="nb_jours_copies" name="nb_jours_copies">
+                        <input type="number" id="nb_jours_copies" name="nb_jours_copies" value="<?php echo htmlspecialchars($current_participation_data['nb_jours_copies'] ?? 0); ?>">
                     </div>
 
                     <div class="form-group">
-                        <button type="submit">Ajouter le Participant</button>
+                        <button type="submit">Modifier la Participation</button>
                     </div>
                 </form>
             <?php endif; ?>
@@ -241,6 +307,6 @@ try {
     </main>
 
     <footer>
-        </footer>
+    </footer>
 </body>
 </html>
