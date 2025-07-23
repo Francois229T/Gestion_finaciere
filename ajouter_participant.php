@@ -110,9 +110,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $activite_id > 0) {
                         ELSE NULL
                     END AS prenom_participant,
                     cb.banque AS compte_bancaire_choisi,
-                    cb.rib_pdf_path AS rib_compte -- Assurez-vous que c'est le champ du RIB
-                FROM
-                    participants p
+                    cb.rib_pdf_path AS rib_compte,
+                    cb.numero_compte AS numero_compte  
+                    FROM participants p
                 LEFT JOIN
                     personnes_physiques pp ON p.id = pp.participant_id
                 LEFT JOIN
@@ -122,7 +122,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $activite_id > 0) {
                 WHERE
                     p.id = :participant_id AND cb.banque = :current_bank_name AND cb.id_compte = :compte_id
             ");
-
+                
             $stmt_data_for_acteurs->execute([
                 ':participant_id'     => $participant_id,
                 ':current_bank_name'  => $current_bank,
@@ -186,14 +186,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $activite_id > 0) {
                                 compte_bancaire_choisi,
                                 rib_compte,
                                 titre,
-                                id_activite)
+                                id_activite,
+                                numero_compte)
                                 VALUES (
                                 :nom,
                                 :prenom,
                                 :compte_bancaire_choisi,
                                 :rib_compte,
                                 :titre,
-                                :id_activite)";
+                                :id_activite,
+                                :numero_compte)";
 
                 $stmt_acteurs_insert = $mysqlClient->prepare($sql_acteurs); // Utilisez $mysqlClient ici !
 
@@ -202,6 +204,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $activite_id > 0) {
                     ':prenom'                  => $acteur_data['prenom_participant'],
                     ':compte_bancaire_choisi'  => $acteur_data['compte_bancaire_choisi'], // C'est le nom de la banque
                     ':rib_compte'              => $acteur_data['rib_compte'],
+                    ':numero_compte'           => $acteur_data['numero_compte'],
                     ':titre'                   => $titre_participant, // Titre vient du formulaire HTML
                     ':id_activite'             => $activite_id
                 ]);
